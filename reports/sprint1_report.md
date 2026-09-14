@@ -3,10 +3,10 @@
 - **ชื่อโปรเจกต์:** Virtual Pet (AI Companion)
 - **สัปดาห์ที่:** 1 (Sprint 1: Front-End App Dev)
 - **สมาชิกในทีม:**
-  - Team Leader: อาอิง
-  - Planner: ยีนส์
-  - Coder: ปริม
-  - Debugger / QA: แคร์
+  - Team Leader: ยีนส์
+  - Planner: อาอิง
+  - Coder: แคร์
+  - Debugger / QA: ปริม
 
 ## 1. สรุปความก้าวหน้าของงาน (Sprint Progress Summary)
 - [x] ออกแบบโครงสร้างระบบและนิยาม Definition of Done ใน `PLAN.md`
