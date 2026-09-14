@@ -44,6 +44,10 @@ Virtual Pet (AI Companion) คือแอปพลิเคชัน Python ท
 - [x] โค้ดแยกเป็นโมดูลตามหลัก Separation of Concerns (Pet → `src/pet.py`, CLI → `src/cli.py`, entry point → `app.py`)
 - [x] มี unit test เบื้องต้นสำหรับคลาส Pet (`tests/test_pet.py`)
 
+### Prompt ที่ใช้ในการพัฒนา (AI Prompt Log)
+- **Prompt 1:** "as a student in a group of 3 persons: บอส as planner, โชกุน as coder and โฟน as debugger with topic: Typing Test CLI, how to progress with week1/sprint 1"
+- **Prompt 2:** "reframe this into github and full function sourcecode for sprint 1"
+
 ### สถาปัตยกรรม (Layer Separation)
 | Layer | ไฟล์ | สถานะ |
 |---|---|---|
@@ -58,10 +62,10 @@ Virtual Pet (AI Companion) คือแอปพลิเคชัน Python ท
 ## บทบาทในทีม (หมุนเวียนตาม Sprint)
 | บทบาท | สมาชิก | หน้าที่ Sprint 1 |
 |---|---|---|
-| Team Leader | อาอิง | ดูแลภาพรวมทีม, ประสานงาน, ติดตามความคืบหน้าและกำหนดส่งงาน |
-| Planner | ยีนส์ | เขียนสเปก, กำหนด DoD, จัดทำ PLAN.md |
-| Coder | ปริม | เขียนโค้ด `cli.py`, `pet.py`, `app.py` |
-| Debugger / QA | แคร์ | ทดสอบ edge case, เขียนรายงานผลใน `reports/sprint1_report.md` |
+| Team Leader | ยีนส์ | ดูแลภาพรวมทีม, ประสานงาน, ติดตามความคืบหน้าและกำหนดส่งงาน |
+| Planner | อาอิง | เขียนสเปก, กำหนด DoD, จัดทำ PLAN.md |
+| Coder | แคร์ | เขียนโค้ด `cli.py`, `pet.py`, `app.py` |
+| Debugger / QA | ปริม | ทดสอบ edge case, เขียนรายงานผลใน `reports/sprint1_report.md` |
 
 > **หมายเหตุ:** หมุนเวียนบทบาทกันใน Sprint ถัดไปตามคำแนะนำของวิชา
 
