@@ -3,9 +3,10 @@
 - **ชื่อโปรเจกต์:** Virtual Pet (AI Companion)
 - **สัปดาห์ที่:** 1 (Sprint 1: Front-End App Dev)
 - **สมาชิกในทีม:**
-  - Planner / Team Leader: _[ชื่อนักศึกษา]_
-  - Coder: _[ชื่อนักศึกษา]_
-  - Debugger / QA: _[ชื่อนักศึกษา]_
+  - Team Leader: อาอิง
+  - Planner: ยีนส์
+  - Coder: ปริม
+  - Debugger / QA: แคร์
 
 ## 1. สรุปความก้าวหน้าของงาน (Sprint Progress Summary)
 - [x] ออกแบบโครงสร้างระบบและนิยาม Definition of Done ใน `PLAN.md`
@@ -14,7 +15,7 @@
 - [x] ดักจับข้อผิดพลาดกรณีผู้ใช้ป้อนคำสั่งไม่ถูกต้องหรือกด Ctrl+C ด้วย try-except (ไม่ทำให้โปรแกรม crash)
 - [x] เขียน unit test เบื้องต้น (`tests/test_pet.py`) และรันผ่านทั้งหมด
 - [ ] ยังไม่เริ่ม: การเชื่อมต่อ API และการบันทึกข้อมูลแบบถาวร (วางแผนไว้ Sprint 2)
-- [ ] ยังไม่ได้เปิด Pull Request บน GitHub (ยังไม่ได้สร้าง repository — รอทีมตั้งค่า)
+- [x] สร้าง GitHub repository และ push โค้ดขึ้นเรียบร้อยแล้ว
 
 ## 2. ผลการทดสอบระบบ (Quality Assurance & Debugging Report)
 
@@ -47,9 +48,9 @@
 ## 3. สรุปบทเรียนประจำสัปดาห์ (Retrospective: Wow! & Whoops!)
 - **Wow!** (ส่วนที่ทำได้ดี): แยก Presentation Layer (`cli.py`) ออกจาก Business Logic (`pet.py`) ได้ชัดเจนตั้งแต่ Sprint แรก ทำให้พร้อมต่อยอด Data Access Layer ใน Sprint 2 ได้ทันที; ทุกเมธอดของ `Pet` จำกัดค่าสถานะไม่ให้หลุดช่วง 0-100 ตั้งแต่ต้น ป้องกันบั๊กที่มักเจอทีหลัง
 - **Whoops!** (ปัญหาที่พบและแนวทางแก้ไข): ยังไม่มีการเชื่อมต่อ API หรือบันทึกข้อมูลถาวร — เป็นไปตามแผนที่ตั้งใจเว้นไว้สำหรับ Sprint 2 (Back-End) ตามเอกสารคำชี้แจงของวิชา ไม่ใช่ข้อผิดพลาด แต่ต้องติดตามต่อให้ทันกำหนดส่ง 25/9/69
-- **ลิงก์ Repository / Pull Request:** _[ใส่ลิงก์ GitHub หลังจากทีมสร้าง repository และ push โค้ดแล้ว]_
+- **ลิงก์ Repository / Pull Request:** https://github.com/parima1209/virtual-pet-ai-companion
 
 ## 4. สิ่งที่ต้องทำต่อก่อนส่งงาน Sprint 1 (18/9/69)
-- [ ] ใส่ชื่อสมาชิกในทีมแทนช่องว่างในไฟล์นี้, `PLAN.md`, และ `README.md`
-- [ ] สร้าง GitHub repository และ push โค้ดชุดนี้ขึ้นไป แล้วแปะลิงก์ในหัวข้อ 3
+- [x] ใส่ชื่อสมาชิกในทีมในไฟล์นี้, `PLAN.md`, และ `README.md`
+- [x] สร้าง GitHub repository และ push โค้ดชุดนี้ขึ้นไป แล้วแปะลิงก์ในหัวข้อ 3
 - [ ] (ถ้ามีเวลา) ทดสอบเพิ่มเติมกับ edge case อื่น ๆ เช่น กด Enter เปล่า หรือใส่ตัวเลขนอกช่วง 1-5

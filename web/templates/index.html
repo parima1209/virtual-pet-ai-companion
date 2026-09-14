@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Virtual Pet (AI Companion)</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <main class="game-card">
+    <header class="game-header">
+      <h1>🐾 Virtual Pet <span class="subtitle">(AI Companion)</span></h1>
+    </header>
+
+    <section class="stage">
+      <img id="sprite" class="sprite" src="{{ url_for('static', filename='sprites/pet_idle.png') }}" alt="สัตว์เลี้ยงของคุณ">
+      <h2 id="pet-name">{{ pet_name }}</h2>
+    </section>
+
+    <section class="stats">
+      <div class="stat-row">
+        <span class="stat-label">🍖 Hunger</span>
+        <div class="bar"><div id="bar-hunger" class="bar-fill hunger"></div></div>
+        <span id="val-hunger" class="stat-val">--</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">💛 Mood</span>
+        <div class="bar"><div id="bar-mood" class="bar-fill mood"></div></div>
+        <span id="val-mood" class="stat-val">--</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">⚡ Energy</span>
+        <div class="bar"><div id="bar-energy" class="bar-fill energy"></div></div>
+        <span id="val-energy" class="stat-val">--</span>
+      </div>
+    </section>
+
+    <section class="actions">
+      <button class="pixel-btn feed" data-action="feed">🍖 Feed</button>
+      <button class="pixel-btn play" data-action="play">🎾 Play</button>
+      <button class="pixel-btn rest" data-action="rest">💤 Rest</button>
+      <button class="pixel-btn interact" id="btn-interact">✨ Interact</button>
+    </section>
+
+    <section class="log-panel">
+      <p id="log-message">กดปุ่มด้านบนเพื่อเริ่มดูแล {{ pet_name }} ได้เลย!</p>
+      <div id="interaction-box" class="interaction-box" hidden></div>
+    </section>
+
+    <footer class="game-footer">
+      Virtual Pet (AI Companion) &middot; Script Programming (CP352301) &middot; Pixel-art web edition
+    </footer>
+  </main>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

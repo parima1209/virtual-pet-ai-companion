@@ -1,14 +1,26 @@
 # PLAN.md — Virtual Pet (AI Companion)
 
 ## ภาพรวมโปรเจค
-Virtual Pet (AI Companion) คือแอปพลิเคชัน Python แบบ CLI ที่จำลองการเลี้ยงสัตว์เลี้ยงเสมือน
+Virtual Pet (AI Companion) คือแอปพลิเคชัน Python ที่จำลองการเลี้ยงสัตว์เลี้ยงเสมือน
 ผู้ใช้สามารถให้อาหาร เล่นด้วย ให้พักผ่อน และเช็คสถานะ (ความหิว/ความสุข/พลังงาน) ของสัตว์เลี้ยงได้
-ในสปรินต์ถัดไปจะต่อยอดให้ดึงข้อมูลจาก Dog API / Cat Facts API (เป็น "interaction") และบันทึกสถานะ
-แบบถาวรด้วยไฟล์ JSON ตามข้อกำหนดของวิชา (Data API Integration + Data Persistence)
+โดยมี 2 หน้าตา (Presentation Layer) ที่ใช้ Business Logic เดียวกัน (`src/pet.py`):
+- **CLI** (`app.py`, `src/cli.py`) — เวอร์ชันดั้งเดิมของ Sprint 1
+- **เว็บ Pixel Art Game** (`web/`, ใช้ Flask) — เวอร์ชันที่ปรับหลัง Sprint 1 (ดูหัวข้อ "การปรับทิศทางหลัง Sprint 1" ด้านล่าง)
+  รวม Data API Integration (Dog API / Cat Facts API ผ่านปุ่ม "Interact") และ Data Persistence (JSON) ไว้แล้ว
 
 **รหัสวิชา:** CP352301 Script Programming
 **Domain:** Pet Apps (Virtual Pet)
 **Framework Style:** Object-Oriented Programming (OOP)
+
+---
+
+## การปรับทิศทางหลัง Sprint 1 (Pivot)
+หลังส่ง Sprint 1 แบบ CLI แล้ว ทีมตัดสินใจเปลี่ยนหน้าตาโปรเจคเป็นเว็บสไตล์ **Pixel Art Game**
+(ยังใช้คลาส `Pet` เดิมเป็น Business Logic) เพื่อให้ตรงกับธีมที่ต้องการมากขึ้น โดย:
+- **ไม่ลบ/ไม่แก้ไฟล์ CLI เดิม** (`app.py`, `src/cli.py`) — ของที่ส่งไป Sprint 1 ยังอยู่ครบและรันได้เหมือนเดิม
+- เพิ่มโฟลเดอร์ `web/` เป็นหน้าตาใหม่ (Flask) ที่เรียกใช้คลาส `Pet` เดิม จึงไม่กระทบคะแนน Sprint 1 ที่ส่งไปแล้ว
+- สไปรต์ Pixel Art (4 สถานะ: idle/happy/hungry/sleepy) เป็น placeholder ที่สร้างด้วยสคริปต์ Pillow
+  (`web/generate_sprites.py`) แก้ไข/เปลี่ยนภาพจริงภายหลังได้โดยไม่กระทบโค้ด
 
 ---
 
@@ -33,26 +45,97 @@ Virtual Pet (AI Companion) คือแอปพลิเคชัน Python แ
 - [x] มี unit test เบื้องต้นสำหรับคลาส Pet (`tests/test_pet.py`)
 
 ### สถาปัตยกรรม (Layer Separation)
-| Layer | ไฟล์ | สถานะ Sprint 1 |
+| Layer | ไฟล์ | สถานะ |
 |---|---|---|
-| Presentation Layer (CLI) | `src/cli.py` | ทำแล้ว |
-| Business Logic Layer | `src/pet.py` (คลาส `Pet`) | ทำโครงสร้างพื้นฐานแล้ว — ตรรกะเพิ่มเติม/AI interaction เพิ่มใน Sprint 2-3 |
-| Data Access Layer | ยังไม่เริ่ม | วางแผนใช้ไฟล์ JSON (`data/pet_state.json`) ใน Sprint 2 |
+| Presentation Layer (CLI) | `src/cli.py` | ทำแล้ว (Sprint 1) |
+| Presentation Layer (เว็บ Pixel Art) | `web/app.py`, `web/templates/`, `web/static/` | ทำแล้ว (หลัง pivot) — ใช้ Flask |
+| Business Logic Layer | `src/pet.py` (คลาส `Pet`) | ใช้ร่วมกันทั้ง CLI และเว็บ — ตรรกะเพิ่มเติม/AI interaction เพิ่มใน Sprint 2-3 |
+| Data Access Layer | `web/app.py` (`load_pet`/`save_pet`) | ทำแล้วในเวอร์ชันเว็บ — บันทึก/โหลด `data/pet_state.json` |
+| Data API Integration | `web/app.py` (`/api/interact`) | ทำแล้วในเวอร์ชันเว็บ — สุ่มเรียก Dog API หรือ Cat Facts API พร้อม error handling |
 
 ---
 
 ## บทบาทในทีม (หมุนเวียนตาม Sprint)
 | บทบาท | สมาชิก | หน้าที่ Sprint 1 |
 |---|---|---|
-| Planner / Team Leader | _[ใส่ชื่อสมาชิก]_ | เขียนสเปก, กำหนด DoD, จัดทำ PLAN.md |
-| Coder | _[ใส่ชื่อสมาชิก]_ | เขียนโค้ด `cli.py`, `pet.py`, `app.py` |
-| Debugger / QA | _[ใส่ชื่อสมาชิก]_ | ทดสอบ edge case, เขียนรายงานผลใน `reports/sprint1_report.md` |
+| Team Leader | อาอิง | ดูแลภาพรวมทีม, ประสานงาน, ติดตามความคืบหน้าและกำหนดส่งงาน |
+| Planner | ยีนส์ | เขียนสเปก, กำหนด DoD, จัดทำ PLAN.md |
+| Coder | ปริม | เขียนโค้ด `cli.py`, `pet.py`, `app.py` |
+| Debugger / QA | แคร์ | ทดสอบ edge case, เขียนรายงานผลใน `reports/sprint1_report.md` |
 
-> **หมายเหตุ:** กรุณาใส่ชื่อสมาชิกในทีมแทนช่องว่างด้านบน แล้วหมุนเวียนบทบาทกันใน Sprint ถัดไปตามคำแนะนำของวิชา
+> **หมายเหตุ:** หมุนเวียนบทบาทกันใน Sprint ถัดไปตามคำแนะนำของวิชา
 
 ---
 
-## แผน Sprint ถัดไป (ภาพรวม)
-- **Sprint 2 (Back-End App Dev, ส่ง 25/9/69):** เขียน Business Logic เพิ่มเติม, เชื่อมต่อ Dog API หรือ Cat Facts API (`requests`), บันทึก/โหลดสถานะ Pet เป็น JSON (File I/O), จัดการ Exception จาก API/ไฟล์
-- **Sprint 3 (Full-Stack App Dev, ส่ง 2/10/69):** เชื่อม Front-End กับ Back-End ให้สมบูรณ์, จัดการ State ระหว่าง session, รับมือ Edge Cases
-- **Final Sprint (DevOps/CI/CD/AI, ส่ง 16/10/69):** Unit test อัตโนมัติ (pytest) ครบทุกฟังก์ชัน, ตั้งค่า CI/CD (GitHub Actions: lint + test), เชื่อมฟีเจอร์ AI/Automation, จัดทำ README และเตรียมนำเสนอ
+## Sprint 2 (สัปดาห์ที่ 13) — Back-End App Dev
+กำหนดส่ง: **25/9/69**
+
+**เป้าหมาย:** ต่อยอด Business Logic, เชื่อมต่อ Data API (Dog API / Cat Facts API) และทำ Data Persistence
+ด้วยไฟล์ JSON พร้อมจัดการ Exception ให้ครบถ้วน
+
+> **หมายเหตุ:** งานส่วนใหญ่ของ Sprint นี้ (API integration + JSON persistence) ได้ทำไปแล้วล่วงหน้า
+> ในเวอร์ชันเว็บ (`web/app.py`) ตอนปรับทิศทางหลัง Sprint 1 — สิ่งที่เหลือคือทำให้ครบตาม DoD ด้านล่าง
+> (โดยเฉพาะ unit test แบบ mock API และการทดสอบบนเครื่องที่มีอินเทอร์เน็ตจริง)
+
+### ขอบเขตระบบ
+- เชื่อมต่อ Dog API (`https://dog.ceo/api/breeds/image/random`) และ Cat Facts API
+  (`https://catfact.ninja/fact`) ผ่าน `requests` แบบสุ่มเลือก API เมื่อผู้ใช้กด "Interact"
+- ตั้งค่า timeout การเรียก API (ไม่ปล่อยให้แอปค้าง) และจัดการ error ทุกกรณี:
+  timeout, connection error, HTTP status ผิดพลาด, JSON/field ที่คาดไม่ถึง
+- บันทึกสถานะ Pet (name, hunger, mood, energy) ลงไฟล์ `data/pet_state.json` ทุกครั้งที่สถานะเปลี่ยน
+- โหลดสถานะจากไฟล์ JSON ตอนเริ่มโปรแกรม ถ้าไม่มีไฟล์หรือไฟล์เสียให้สร้างค่าเริ่มต้นแทน ไม่ crash
+- เขียน unit test ที่ **mock** การเรียก API (ไม่พึ่งอินเทอร์เน็ตจริงตอนรัน test/CI)
+
+### Definition of Done (DoD)
+- [x] เรียก Dog API / Cat Facts API ได้จริงและนำข้อมูล (รูป/ข้อความ) มาแสดงผลในหน้าเว็บ
+- [x] จัดการ timeout / connection error / bad response โดยแสดงข้อความที่เข้าใจง่าย ไม่ crash แอป
+- [x] บันทึกสถานะ Pet ลงไฟล์ JSON ได้ และโหลดกลับมาได้ถูกต้องเมื่อเปิดโปรแกรมใหม่
+- [x] กรณีไฟล์ JSON ไม่มีหรือเสีย โปรแกรมสร้างสัตว์เลี้ยงใหม่แทนโดยไม่ crash
+- [ ] มี unit test ที่ mock การเรียก API ครอบคลุมทั้งกรณีสำเร็จและกรณี error (ยังไม่ได้ทำ — งานที่เหลือของ Sprint นี้)
+- [ ] ทดสอบเรียก API จริงบนเครื่องที่มีอินเทอร์เน็ต (นอก sandbox พัฒนา) อย่างน้อย 1 รอบ พร้อมบันทึกผลใน report
+
+---
+
+## Sprint 3 (สัปดาห์ที่ 14) — Full-Stack App Dev
+กำหนดส่ง: **2/10/69**
+
+**เป้าหมาย:** เชื่อม Front-End (เว็บ Pixel Art) กับ Back-End (Flask + Pet class) ให้ทำงานสมบูรณ์แบบ end-to-end,
+จัดการ State ระหว่าง session, และรับมือ Edge Case ต่างๆ
+
+### ขอบเขตระบบ
+- ทุกปุ่มบนหน้าเว็บ (Feed / Play / Rest / Interact) เรียก REST API ของ Flask และอัปเดตหน้าจอ
+  (สไปรต์ + แถบสถานะ) แบบเรียลไทม์โดยไม่ต้องรีเฟรชหน้า
+- รีเฟรชหน้าเว็บแล้วสถานะสัตว์เลี้ยงต้องไม่หาย (โหลดจาก `data/pet_state.json` เสมอ)
+- เพิ่มกลไกรับมือเมื่อผู้ใช้ปล่อยสัตว์เลี้ยงไว้นาน (เช่น หิวมาก/พลังงานหมด → สถานะพิเศษ หรือข้อความเตือน)
+- ป้องกันการกดปุ่มรัว ๆ ระหว่างรอ API ตอบกลับ (disable ปุ่มชั่วคราว — ทำไปแล้วบางส่วนใน `main.js`)
+- ปรับ UI ให้ใช้งานได้ดีทั้งจอคอมและมือถือ (responsive)
+
+### Definition of Done (DoD)
+- [ ] กดปุ่มแต่ละปุ่มแล้ว state ฝั่ง client กับฝั่ง server ตรงกันเสมอ (ไม่มีอาการค้างหรือแสดงค่าไม่ตรงกัน)
+- [ ] รีเฟรชหน้าเว็บกลางคันแล้วสถานะยังอยู่ครบถูกต้อง
+- [ ] มีข้อความ/สถานะพิเศษเมื่อสัตว์เลี้ยงถูกละเลยนานเกินไป
+- [ ] ทดสอบบนหน้าจอมือถือ (หรือ browser responsive mode) แล้วใช้งานได้ปกติ
+- [ ] ทดสอบ manual แบบครบวงจร (เปิดเกม → feed/play/rest/interact → ปิด/เปิดใหม่) อย่างน้อย 1 รอบ พร้อมบันทึกผล
+
+---
+
+## Final Sprint (สัปดาห์ที่ 16) — DevOps, CI/CD & AI Integration
+กำหนดส่ง: **16/10/69**
+
+**เป้าหมาย:** ทำ Unit Test ให้ครอบคลุมทุกฟังก์ชันหลัก, ตั้งค่า CI/CD อัตโนมัติ, เพิ่มฟีเจอร์ AI/Automation,
+และเตรียมเอกสาร/นำเสนอให้พร้อม
+
+### ขอบเขตระบบ
+- ตั้งค่า GitHub Actions ให้รัน `pytest` และ `flake8` อัตโนมัติทุกครั้งที่ push หรือเปิด Pull Request
+- เพิ่ม unit test ให้ครอบคลุม `src/pet.py`, `web/app.py` (sprite logic, action handling),
+  Data Access Layer (JSON read/write), และ Data API Integration (แบบ mock)
+- เพิ่มฟีเจอร์ AI/Automation อย่างน้อย 1 อย่าง (เช่น ข้อความให้กำลังใจ/ทำนายอารมณ์สัตว์เลี้ยงที่ฉลาดขึ้น
+  หรือเชื่อมต่อ AI API ภายนอกเพิ่มเติม)
+- จัดทำ README ฉบับสมบูรณ์ (ครอบคลุมทั้ง CLI และเว็บ) และเตรียม slide/พิตช์สำหรับนำเสนอ
+
+### Definition of Done (DoD)
+- [ ] มี GitHub Actions workflow ที่รัน lint + test อัตโนมัติ และขึ้นสถานะ pass/fail บน GitHub ได้จริง
+- [ ] Unit test ครอบคลุมทุกฟังก์ชันหลักของโปรเจค (ทั้ง Business Logic, Data Access, API Integration)
+- [ ] มีฟีเจอร์ AI/Automation อย่างน้อย 1 อย่างที่ทำงานได้จริงและสาธิตได้
+- [ ] README อธิบายวิธีติดตั้ง/รัน/ใช้งานครบถ้วน ทั้งเวอร์ชัน CLI และเว็บ
+- [x] เตรียม Project Pitch (เอกสาร + slide) สำหรับนำเสนอเรียบร้อยแล้ว (ทำไปก่อนหน้านี้)

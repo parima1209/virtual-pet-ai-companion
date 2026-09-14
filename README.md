@@ -1,7 +1,10 @@
 # Virtual Pet (AI Companion)
 
 โปรเจค Final Project วิชา **Script Programming (CP352301)** — แอปพลิเคชัน Python
-จำลองการเลี้ยงสัตว์เลี้ยงเสมือนผ่านหน้าจอ Command Line (CLI)
+จำลองการเลี้ยงสัตว์เลี้ยงเสมือน มี 2 หน้าตาให้ใช้งาน โดยใช้ Business Logic (`src/pet.py`) ร่วมกัน:
+- **CLI** (`app.py`) — เวอร์ชันดั้งเดิมของ Sprint 1
+- **เว็บสไตล์ Pixel Art Game** (`web/app.py`, ใช้ Flask) — เวอร์ชันใหม่ที่ต่อยอดจาก Sprint 1
+  พร้อม Data Persistence (JSON) และ Data API Integration (Dog API / Cat Facts API) ในตัว
 
 ## สถานะโปรเจค
 - [x] **Sprint 1** — Front-End App Dev (CLI + Pet class เบื้องต้น) — ส่งงาน 18/9/69
@@ -21,31 +24,50 @@ source venv/bin/activate      # Windows: venv\Scripts\activate
 # 2. ติดตั้ง dependencies
 pip install -r requirements.txt
 
-# 3. รันโปรแกรม
+# 3a. รันเวอร์ชัน CLI (Sprint 1)
 python app.py
 
-# 4. รัน unit tests
+# 3b. หรือรันเวอร์ชันเว็บ Pixel Art Game
+python web/app.py
+# แล้วเปิดเบราว์เซอร์ที่ http://127.0.0.1:5000
+
+# 4. รัน unit tests (ครอบคลุมทั้ง CLI และเว็บ)
 pytest
 ```
 
 ## วิธีเล่น
-1. ตั้งชื่อสัตว์เลี้ยงของคุณ
-2. เลือกคำสั่งจากเมนู: `feed` (ให้อาหาร), `play` (เล่นด้วย), `rest` (พักผ่อน), `status` (เช็คสถานะ), `quit` (ออก)
-3. ดูแลให้ความหิว ความสุข และพลังงานของสัตว์เลี้ยงอยู่ในระดับที่ดี
+**CLI:** ตั้งชื่อสัตว์เลี้ยง แล้วเลือกคำสั่งจากเมนู: `feed` (ให้อาหาร), `play` (เล่นด้วย),
+`rest` (พักผ่อน), `status` (เช็คสถานะ), `quit` (ออก)
+
+**เว็บ (Pixel Art):** เปิดหน้าเว็บแล้วกดปุ่ม Feed / Play / Rest เพื่อดูแลสัตว์เลี้ยง
+สไปรต์และแถบสถานะ (หิว/อารมณ์/พลังงาน) จะอัปเดตแบบเรียลไทม์ และกดปุ่ม **Interact**
+เพื่อสุ่มดึงรูปสุนัขหรือ fact แมวจาก API ภายนอก (ได้รางวัลเป็นอารมณ์ที่เพิ่มขึ้นด้วย)
+
+ทั้งสองเวอร์ชันดูแลให้ความหิว ความสุข และพลังงานของสัตว์เลี้ยงอยู่ในระดับที่ดี
 
 ## โครงสร้างโปรเจค
 ```
 virtual-pet-ai-companion/
-├── app.py                   # entry point
+├── app.py                     # entry point ของเวอร์ชัน CLI
 ├── src/
-│   ├── pet.py                # คลาส Pet (โมเดลข้อมูล / Business Logic)
-│   └── cli.py                 # ส่วน CLI (Presentation Layer)
+│   ├── pet.py                  # คลาส Pet (โมเดลข้อมูล / Business Logic) — ใช้ร่วมกันทั้ง CLI และเว็บ
+│   └── cli.py                  # ส่วน CLI (Presentation Layer)
+├── web/                        # เวอร์ชันเว็บ Pixel Art Game (Flask)
+│   ├── app.py                   # Flask app + Data Access Layer (JSON) + Data API Integration
+│   ├── generate_sprites.py      # สคริปต์สร้างสไปรต์ Pixel Art (placeholder) ด้วย Pillow
+│   ├── templates/
+│   │   └── index.html           # หน้าเว็บเกม
+│   └── static/
+│       ├── css/style.css        # สไตล์ Pixel Art
+│       ├── js/main.js           # เรียก REST API ของ Flask ฝั่ง client
+│       └── sprites/             # ไฟล์ .png สไปรต์ 4 สถานะ (idle/happy/hungry/sleepy)
 ├── tests/
-│   └── test_pet.py           # unit test เบื้องต้นสำหรับคลาส Pet
-├── data/                      # (ใช้ใน Sprint 2 สำหรับเก็บ pet_state.json)
+│   ├── test_pet.py             # unit test สำหรับคลาส Pet
+│   └── test_web_app.py         # unit test สำหรับ logic เลือกสไปรต์ในเว็บแอป
+├── data/                        # เก็บ pet_state.json (สร้างอัตโนมัติตอนรันเว็บแอป)
 ├── reports/
-│   └── sprint1_report.md     # รายงานผล Sprint 1
-├── PLAN.md                    # แผนงานและ Definition of Done ราย Sprint
+│   └── sprint1_report.md       # รายงานผล Sprint 1
+├── PLAN.md                      # แผนงานและ Definition of Done ราย Sprint
 ├── requirements.txt
 └── README.md
 ```
@@ -53,15 +75,18 @@ virtual-pet-ai-companion/
 ## Stack เทคโนโลยี
 - Python 3.x
 - Framework Style: Object-Oriented Programming (OOP)
+- Web Framework: Flask (เวอร์ชันเว็บ Pixel Art Game)
+- Pixel Art: Pillow (PIL) สำหรับสร้างสไปรต์
 - Testing: pytest
-- (แผน Sprint 2) API: Dog API หรือ Cat Facts API ผ่าน `requests`
-- (แผน Sprint 2) Data Persistence: ไฟล์ JSON
+- API: Dog API (dog.ceo) และ Cat Facts API (catfact.ninja) ผ่าน `requests`
+- Data Persistence: ไฟล์ JSON (`data/pet_state.json`)
 
 ## ทีมพัฒนา
 | บทบาท | สมาชิก |
 |---|---|
-| Planner / Team Leader | _[ใส่ชื่อ]_ |
-| Coder | _[ใส่ชื่อ]_ |
-| Debugger / QA | _[ใส่ชื่อ]_ |
+| Team Leader | อาอิง |
+| Planner | ยีนส์ |
+| Coder | ปริม |
+| Debugger / QA | แคร์ |
 
-> กรุณาใส่ชื่อสมาชิกในทีมแทนช่องว่างด้านบน (แก้ไขได้ทั้งในไฟล์นี้และใน `PLAN.md`)
+**Repository:** https://github.com/parima1209/virtual-pet-ai-companion
