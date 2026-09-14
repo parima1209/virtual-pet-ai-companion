@@ -84,9 +84,9 @@ virtual-pet-ai-companion/
 ## ทีมพัฒนา
 | บทบาท | สมาชิก |
 |---|---|
-| Team Leader | อาอิง |
-| Planner | ยีนส์ |
-| Coder | ปริม |
-| Debugger / QA | แคร์ |
+| Team Leader | ยีนส์ |
+| Planner | อาอิง |
+| Coder | เเคร์ |
+| Debugger / QA | ปริม |
 
 **Repository:** https://github.com/parima1209/virtual-pet-ai-companion
