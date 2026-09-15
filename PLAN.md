@@ -58,25 +58,13 @@ Virtual Pet (AI Companion) คือแอปพลิเคชัน Python ท
 | Data API Integration | `web/app.py` (`/api/interact`) | ทำแล้วในเวอร์ชันเว็บ — สุ่มเรียก Dog API หรือ Cat Facts API พร้อม error handling |
 | Algorithm Layer (Search/Filter/Sort) | `web/history.py`, endpoint `/api/history` | ทำแล้ว (Sprint 2) — ค้นหา/กรอง/เรียงลำดับประวัติการโต้ตอบ |
 
----
-
-## บทบาทในทีม (หมุนเวียนตาม Sprint)
-
-### Sprint 1
+### บทบาทในทีม — Sprint 1
 | บทบาท | สมาชิก | หน้าที่ Sprint 1 |
 |---|---|---|
 | Team Leader | ยีนส์ | ดูแลภาพรวมทีม, ประสานงาน, ติดตามความคืบหน้าและกำหนดส่งงาน |
 | Planner | อาอิง | เขียนสเปก, กำหนด DoD, จัดทำ PLAN.md |
 | Coder | แคร์ | เขียนโค้ด `cli.py`, `pet.py`, `app.py` |
 | Debugger / QA | ปริม | ทดสอบ edge case, เขียนรายงานผลใน `reports/sprint1_report.md` |
-
-### Sprint 2
-| บทบาท | สมาชิก | หน้าที่ Sprint 2 |
-|---|---|---|
-| Team Leader | แคร์ | ดูแลภาพรวมทีม, ประสานงาน, ติดตามความคืบหน้าและกำหนดส่งงาน |
-| Planner | ปริม | เขียนสเปก/ขอบเขต Sprint 2, กำหนด DoD, อัปเดต PLAN.md |
-| Coder | อาอิง | เขียนโค้ด `web/app.py`, `web/history.py` |
-| Debugger / QA | ยีนส์ | ทดสอบ edge case, เขียนรายงานผลใน `reports/sprint2_report.md` |
 
 > **หมายเหตุ:** หมุนเวียนบทบาทกันทุก Sprint ตามคำแนะนำของวิชา
 
@@ -124,6 +112,16 @@ Virtual Pet (AI Companion) คือแอปพลิเคชัน Python ท
 - [x] ฟังก์ชัน sort เรียงลำดับประวัติตามเวลาได้ถูกต้อง (ทั้ง 2 ทิศทาง) มี unit test รองรับ (`tests/test_history.py`)
 - [x] มีช่องทางในหน้าเว็บให้สาธิตผลลัพธ์ search/filter/sort ได้จริงตอน Live Demo
   (ปุ่ม "📜 ประวัติการโต้ตอบ" เปิดแผงค้นหา/กรอง/เรียงลำดับ พร้อมอัปเดตผลแบบเรียลไทม์)
+
+### บทบาทในทีม — Sprint 2
+| บทบาท | สมาชิก | หน้าที่ Sprint 2 |
+|---|---|---|
+| Team Leader | แคร์ | ดูแลภาพรวมทีม, ประสานงาน, ติดตามความคืบหน้าและกำหนดส่งงาน |
+| Planner | ปริม | เขียนสเปก/ขอบเขต Sprint 2, กำหนด DoD, อัปเดต PLAN.md |
+| Coder | อาอิง | เขียนโค้ด `web/app.py`, `web/history.py` |
+| Debugger / QA | ยีนส์ | ทดสอบ edge case, เขียนรายงานผลใน `reports/sprint2_report.md` |
+
+> **หมายเหตุ:** หมุนเวียนบทบาทกันทุก Sprint ตามคำแนะนำของวิชา
 
 ---
 
