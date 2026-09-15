@@ -61,6 +61,8 @@ Virtual Pet (AI Companion) คือแอปพลิเคชัน Python ท
 ---
 
 ## บทบาทในทีม (หมุนเวียนตาม Sprint)
+
+### Sprint 1
 | บทบาท | สมาชิก | หน้าที่ Sprint 1 |
 |---|---|---|
 | Team Leader | ยีนส์ | ดูแลภาพรวมทีม, ประสานงาน, ติดตามความคืบหน้าและกำหนดส่งงาน |
@@ -68,7 +70,15 @@ Virtual Pet (AI Companion) คือแอปพลิเคชัน Python ท
 | Coder | แคร์ | เขียนโค้ด `cli.py`, `pet.py`, `app.py` |
 | Debugger / QA | ปริม | ทดสอบ edge case, เขียนรายงานผลใน `reports/sprint1_report.md` |
 
-> **หมายเหตุ:** หมุนเวียนบทบาทกันใน Sprint ถัดไปตามคำแนะนำของวิชา
+### Sprint 2
+| บทบาท | สมาชิก | หน้าที่ Sprint 2 |
+|---|---|---|
+| Team Leader | แคร์ | ดูแลภาพรวมทีม, ประสานงาน, ติดตามความคืบหน้าและกำหนดส่งงาน |
+| Planner | ปริม | เขียนสเปก/ขอบเขต Sprint 2, กำหนด DoD, อัปเดต PLAN.md |
+| Coder | อาอิง | เขียนโค้ด `web/app.py`, `web/history.py` |
+| Debugger / QA | ยีนส์ | ทดสอบ edge case, เขียนรายงานผลใน `reports/sprint2_report.md` |
+
+> **หมายเหตุ:** หมุนเวียนบทบาทกันทุก Sprint ตามคำแนะนำของวิชา
 
 ---
 

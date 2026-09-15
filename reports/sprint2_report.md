@@ -2,11 +2,11 @@
 
 - **ชื่อโปรเจกต์:** Virtual Pet (AI Companion)
 - **สัปดาห์ที่:** 2 (Sprint 2: Back-End App Dev)
-- **สมาชิกในทีม:**
-  - Team Leader: ยีนส์
-  - Planner: อาอิง
-  - Coder: แคร์
-  - Debugger / QA: ปริม
+- **สมาชิกในทีม (หมุนเวียนบทบาทจาก Sprint 1):**
+  - Team Leader: แคร์
+  - Planner: ปริม
+  - Coder: อาอิง
+  - Debugger / QA: ยีนส์
 
 ## 1. สรุปความก้าวหน้าของงาน (Sprint Progress Summary)
 - [x] เชื่อมต่อ Dog API และ Cat Facts API ผ่าน `requests` แบบสุ่มเลือกเมื่อกด "Interact" (ทำไว้ล่วงหน้าตอน pivot)

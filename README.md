@@ -90,11 +90,13 @@ virtual-pet-ai-companion/
 - Data Persistence: ไฟล์ JSON (`data/pet_state.json`)
 
 ## ทีมพัฒนา
+บทบาทหมุนเวียนกันทุก Sprint (ดูรายละเอียดที่ [`PLAN.md`](./PLAN.md)) — ปัจจุบัน (Sprint 2):
+
 | บทบาท | สมาชิก |
 |---|---|
-| Team Leader | ยีนส์ |
-| Planner | อาอิง |
-| Coder | แคร์ |
-| Debugger / QA | ปริม |
+| Team Leader | แคร์ |
+| Planner | ปริม |
+| Coder | อาอิง |
+| Debugger / QA | ยีนส์ |
 
 **Repository:** https://github.com/parima1209/virtual-pet-ai-companion
