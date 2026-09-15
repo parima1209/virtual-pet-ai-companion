@@ -54,8 +54,9 @@ Virtual Pet (AI Companion) คือแอปพลิเคชัน Python ท
 | Presentation Layer (CLI) | `src/cli.py` | ทำแล้ว (Sprint 1) |
 | Presentation Layer (เว็บ Pixel Art) | `web/app.py`, `web/templates/`, `web/static/` | ทำแล้ว (หลัง pivot) — ใช้ Flask |
 | Business Logic Layer | `src/pet.py` (คลาส `Pet`) | ใช้ร่วมกันทั้ง CLI และเว็บ — ตรรกะเพิ่มเติม/AI interaction เพิ่มใน Sprint 2-3 |
-| Data Access Layer | `web/app.py` (`load_pet`/`save_pet`) | ทำแล้วในเวอร์ชันเว็บ — บันทึก/โหลด `data/pet_state.json` |
+| Data Access Layer | `web/app.py` (`load_pet`/`save_pet`), `web/history.py` | ทำแล้วในเวอร์ชันเว็บ — บันทึก/โหลด `data/pet_state.json` และ `data/interaction_history.json` |
 | Data API Integration | `web/app.py` (`/api/interact`) | ทำแล้วในเวอร์ชันเว็บ — สุ่มเรียก Dog API หรือ Cat Facts API พร้อม error handling |
+| Algorithm Layer (Search/Filter/Sort) | `web/history.py`, endpoint `/api/history` | ทำแล้ว (Sprint 2) — ค้นหา/กรอง/เรียงลำดับประวัติการโต้ตอบ |
 
 ---
 
@@ -77,11 +78,10 @@ Virtual Pet (AI Companion) คือแอปพลิเคชัน Python ท
 **เป้าหมาย:** ต่อยอด Business Logic, เชื่อมต่อ Data API (Dog API / Cat Facts API) และทำ Data Persistence
 ด้วยไฟล์ JSON พร้อมจัดการ Exception ให้ครบถ้วน
 
-> **หมายเหตุ:** งานส่วนใหญ่ของ Sprint นี้ (API integration + JSON persistence) ได้ทำไปแล้วล่วงหน้า
-> ในเวอร์ชันเว็บ (`web/app.py`) ตอนปรับทิศทางหลัง Sprint 1 — สิ่งที่เหลือคือทำให้ครบตาม DoD ด้านล่าง
-> (โดยเฉพาะ unit test แบบ mock API, การทดสอบบนเครื่องที่มีอินเทอร์เน็ตจริง และฟีเจอร์ search/filter/sort
-> ที่เอกสารเกณฑ์การประเมินของอาจารย์ระบุไว้ชัดเจนสำหรับ Sprint นี้ — คิดเป็น 25/100 คะแนนของ Rubric
-> หมวด "การประมวลผลข้อมูลและ Logic" จึงสำคัญมาก ห้ามข้าม)
+> **หมายเหตุ:** Sprint นี้ทำเสร็จครบแล้วทุกข้อ (API integration, JSON persistence, ประวัติการโต้ตอบ,
+> search/filter/sort, unit test แบบ mock API) รวมถึงทดสอบเรียก API จริงบนเครื่องที่มีอินเทอร์เน็ตจริง
+> (นอก sandbox พัฒนา) แล้วด้วย — ได้รูปสุนัขและ cat fact จริงจาก Dog API/Cat Facts API ถูกต้อง
+> และประวัติการโต้ตอบพร้อม search/filter/sort ทำงานถูกต้องตามที่ออกแบบ
 
 ### ขอบเขตระบบ
 - เชื่อมต่อ Dog API (`https://dog.ceo/api/breeds/image/random`) และ Cat Facts API
@@ -105,13 +105,15 @@ Virtual Pet (AI Companion) คือแอปพลิเคชัน Python ท
 - [x] จัดการ timeout / connection error / bad response โดยแสดงข้อความที่เข้าใจง่าย ไม่ crash แอป
 - [x] บันทึกสถานะ Pet ลงไฟล์ JSON ได้ และโหลดกลับมาได้ถูกต้องเมื่อเปิดโปรแกรมใหม่
 - [x] กรณีไฟล์ JSON ไม่มีหรือเสีย โปรแกรมสร้างสัตว์เลี้ยงใหม่แทนโดยไม่ crash
-- [ ] มี unit test ที่ mock การเรียก API ครอบคลุมทั้งกรณีสำเร็จและกรณี error (ยังไม่ได้ทำ — งานที่เหลือของ Sprint นี้)
-- [ ] ทดสอบเรียก API จริงบนเครื่องที่มีอินเทอร์เน็ต (นอก sandbox พัฒนา) อย่างน้อย 1 รอบ พร้อมบันทึกผลใน report
-- [ ] บันทึกประวัติการโต้ตอบทุกครั้งที่กด Interact ลง `data/interaction_history.json` ได้ถูกต้อง
-- [ ] ฟังก์ชัน search ค้นหาประวัติจากคำค้นได้ถูกต้อง มี unit test รองรับ
-- [ ] ฟังก์ชัน filter กรองประวัติตามแหล่งที่มา/ประเภทได้ถูกต้อง มี unit test รองรับ
-- [ ] ฟังก์ชัน sort เรียงลำดับประวัติตามเวลาได้ถูกต้อง (ทั้ง 2 ทิศทาง) มี unit test รองรับ
-- [ ] มีช่องทางในหน้าเว็บ (หรือ API endpoint) ให้สาธิตผลลัพธ์ search/filter/sort ได้จริงตอน Live Demo
+- [x] มี unit test ที่ mock การเรียก API ครอบคลุมทั้งกรณีสำเร็จและกรณี error (`tests/test_web_app.py`)
+- [x] ทดสอบเรียก API จริงบนเครื่องที่มีอินเทอร์เน็ต (นอก sandbox พัฒนา) อย่างน้อย 1 รอบ พร้อมบันทึกผลใน report
+  (ทดสอบแล้วบนเครื่องจริงของทีม — ได้รูปสุนัข/cat fact จริงจาก API ถูกต้อง)
+- [x] บันทึกประวัติการโต้ตอบทุกครั้งที่กด Interact ลง `data/interaction_history.json` ได้ถูกต้อง (`web/history.py`)
+- [x] ฟังก์ชัน search ค้นหาประวัติจากคำค้นได้ถูกต้อง มี unit test รองรับ (`tests/test_history.py`)
+- [x] ฟังก์ชัน filter กรองประวัติตามแหล่งที่มา/ประเภทได้ถูกต้อง มี unit test รองรับ (`tests/test_history.py`)
+- [x] ฟังก์ชัน sort เรียงลำดับประวัติตามเวลาได้ถูกต้อง (ทั้ง 2 ทิศทาง) มี unit test รองรับ (`tests/test_history.py`)
+- [x] มีช่องทางในหน้าเว็บให้สาธิตผลลัพธ์ search/filter/sort ได้จริงตอน Live Demo
+  (ปุ่ม "📜 ประวัติการโต้ตอบ" เปิดแผงค้นหา/กรอง/เรียงลำดับ พร้อมอัปเดตผลแบบเรียลไทม์)
 
 ---
 
