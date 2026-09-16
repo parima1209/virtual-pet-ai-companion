@@ -6,6 +6,8 @@ Flask web front-end (Pixel Art) สำหรับ Virtual Pet (AI Companion)
 - ใช้คลาส Pet เดิมจาก src/pet.py เป็น Business Logic Layer (ไม่แก้ไขไฟล์เดิม)
 - เพิ่ม Data Access Layer: บันทึก/โหลดสถานะสัตว์เลี้ยงเป็นไฟล์ JSON (data/pet_state.json)
 - เพิ่ม Data API Integration: เรียก Dog API / Cat Facts API แบบสุ่มในปุ่ม "Interact"
+- Sprint 2: บันทึก "ประวัติการโต้ตอบ" ทุกครั้งที่ Interact สำเร็จ (web/history.py) และเปิด endpoint
+  /api/history ให้ search / filter / sort ประวัตินั้นได้
 
 วิธีรัน (จาก root โปรเจค):
     pip install -r requirements.txt
@@ -26,6 +28,7 @@ if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
 from src.pet import Pet  # noqa: E402
+import history  # noqa: E402
 
 try:
     import requests
@@ -177,10 +180,37 @@ def api_interact():
     pet.mood = min(100, pet.mood + 8)
     save_pet(pet)
 
+    # Sprint 2: บันทึกผลลัพธ์นี้ลง "ประวัติการโต้ตอบ" เพื่อให้ search/filter/sort ได้ทีหลัง
+    content_text = content.get("url") or content.get("text") or ""
+    history.add_entry(source=api_name, kind=content["kind"], content=content_text)
+
     result = state_payload(flavor_text)
     result["interaction"] = content
     result["source"] = api_name
     return jsonify(result)
+
+
+@app.route("/api/history")
+def api_history():
+    """
+    Sprint 2 — ค้นหา (Searching) / กรอง (Filtering) / เรียงลำดับ (Sorting) ประวัติการโต้ตอบ
+    Query params:
+      q      = คำค้นหา (ค้นในเนื้อหา content)
+      source = กรองตามแหล่งที่มา เช่น "Dog API" หรือ "Cat Facts API"
+      kind   = กรองตามประเภท "image" หรือ "fact"
+      order  = "desc" (ใหม่->เก่า, ค่าเริ่มต้น) หรือ "asc" (เก่า->ใหม่)
+    """
+    query = request.args.get("q", "").strip()
+    source = request.args.get("source", "").strip()
+    kind = request.args.get("kind", "").strip()
+    order = request.args.get("order", "desc").strip()
+
+    items = history.load_history()
+    items = history.search_history(items, query)
+    items = history.filter_history(items, source=source or None, kind=kind or None)
+    items = history.sort_history(items, order=order)
+
+    return jsonify({"count": len(items), "results": items})
 
 
 if __name__ == "__main__":
