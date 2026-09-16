@@ -4,6 +4,10 @@
 รูปแบบอ้างอิงจาก [Keep a Changelog](https://keepachangelog.com/) — เลขเวอร์ชันอิงตาม [Semantic Versioning](https://semver.org/)
 (อยู่ระหว่าง 0.x.0 เพราะยังไม่ถึง Final Sprint — จะขึ้น 1.0.0 เมื่อส่งงานฉบับสมบูรณ์)
 
+> **กติกาการอัปเดตไฟล์นี้ (ตั้งแต่ Sprint 3):** ทุกครั้งที่ commit โค้ด/ฟีเจอร์จริง ต้องเพิ่มบรรทัดใต้หัวข้อ
+> `[Unreleased]` ในคอมมิตเดียวกันทันที ห้ามเขียนสรุปย้อนหลังทีเดียวตอนจบ Sprint — มี git hook เตือนอัตโนมัติ
+> (`.githooks/pre-commit`, เปิดใช้ด้วย `git config core.hooksPath .githooks`)
+
 ## [Unreleased] — Sprint 3 & Final Sprint
 
 วางแผนไว้ใน `PLAN.md` ยังไม่เริ่มดำเนินการ:

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# เตือน (ไม่บล็อก commit) เมื่อ commit นี้แก้โค้ด/ฟีเจอร์จริง แต่ไม่ได้แตะ CHANGELOG.md
+# เปิดใช้งาน 1 ครั้งต่อเครื่องด้วย: git config core.hooksPath .githooks
+# เหตุผล: กันปัญหา CHANGELOG ถูกเขียนสรุปย้อนหลังทีเดียวตอนจบ Sprint แทนที่จะอัปเดตไปพร้อมกับงานจริง
+
+staged=$(git diff --cached --name-only)
+
+# ไฟล์ที่ถือว่าเป็น "โค้ด/ฟีเจอร์จริง" ของโปรเจค (ไม่รวมรายงาน/เอกสารประกอบ)
+code_changed=$(echo "$staged" | grep -E '^(src/|web/|tests/|app\.py)' || true)
+changelog_changed=$(echo "$staged" | grep -E '^CHANGELOG\.md$' || true)
+
+if [ -n "$code_changed" ] && [ -z "$changelog_changed" ]; then
+  echo ""
+  echo "เตือน: commit นี้แก้โค้ด/ฟีเจอร์ แต่ยังไม่ได้อัปเดต CHANGELOG.md"
+  echo "ไฟล์ที่แก้:"
+  echo "$code_changed" | sed 's/^/  - /'
+  echo "ลองเพิ่มบรรทัดสั้น ๆ ใต้หัวข้อ [Unreleased] ก่อน commit นะ (แค่เตือน ไม่ได้บังคับ commit ผ่านได้ตามปกติ)"
+  echo ""
+fi
+
+exit 0
