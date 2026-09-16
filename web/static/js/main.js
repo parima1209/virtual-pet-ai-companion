@@ -106,12 +106,74 @@ async function doInteract() {
     }
     renderState(data);
     renderInteraction(data.interaction, data.source);
+    // ถ้าแผงประวัติเปิดอยู่ ให้รีเฟรชประวัติทันทีเพื่อเห็นรายการล่าสุด
+    if (!historyContent.hidden) loadHistory();
   } catch (err) {
     showError("เชื่อมต่อเซิร์ฟเวอร์ไม่ได้: " + err.message);
   } finally {
     setButtonsDisabled(false);
   }
 }
+
+// ---------------------------------------------------------------------------
+// Sprint 2 — แผงประวัติการโต้ตอบ: Search / Filter / Sort ผ่าน /api/history
+// ---------------------------------------------------------------------------
+const historyToggleBtn = document.getElementById("btn-history");
+const historyContent = document.getElementById("history-content");
+const historySearch = document.getElementById("history-search");
+const historySource = document.getElementById("history-source");
+const historyKind = document.getElementById("history-kind");
+const historyOrder = document.getElementById("history-order");
+const historyList = document.getElementById("history-list");
+
+function renderHistory(items) {
+  historyList.innerHTML = "";
+  if (items.length === 0) {
+    const li = document.createElement("li");
+    li.className = "history-empty";
+    li.textContent = "ยังไม่มีประวัติที่ตรงเงื่อนไข ลองกด Interact ดูก่อนนะ";
+    historyList.appendChild(li);
+    return;
+  }
+  items.forEach((item) => {
+    const li = document.createElement("li");
+    li.className = "history-item";
+    const snippet = item.kind === "image" ? "🖼️ ได้รูปภาพใหม่" : `"${item.content}"`;
+    const time = (item.timestamp || "").replace("T", " ").slice(0, 19);
+    li.innerHTML = `<span class="history-time">${time}</span> ` +
+      `<span class="history-source">${item.source}</span> ${snippet}`;
+    historyList.appendChild(li);
+  });
+}
+
+async function loadHistory() {
+  const params = new URLSearchParams();
+  if (historySearch.value.trim()) params.set("q", historySearch.value.trim());
+  if (historySource.value) params.set("source", historySource.value);
+  if (historyKind.value) params.set("kind", historyKind.value);
+  params.set("order", historyOrder.value);
+
+  try {
+    const res = await fetch("/api/history?" + params.toString());
+    const data = await res.json();
+    renderHistory(data.results || []);
+  } catch (err) {
+    historyList.innerHTML = "";
+    const li = document.createElement("li");
+    li.className = "history-empty";
+    li.textContent = "โหลดประวัติไม่สำเร็จ: " + err.message;
+    historyList.appendChild(li);
+  }
+}
+
+historyToggleBtn.addEventListener("click", () => {
+  historyContent.hidden = !historyContent.hidden;
+  if (!historyContent.hidden) loadHistory();
+});
+[historySearch, historySource, historyKind, historyOrder].forEach((el) => {
+  el.addEventListener("input", loadHistory);
+  el.addEventListener("change", loadHistory);
+});
 
 buttons.forEach((btn) => {
   const action = btn.dataset.action;

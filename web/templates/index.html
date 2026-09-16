@@ -47,6 +47,30 @@
       <div id="interaction-box" class="interaction-box" hidden></div>
     </section>
 
+    <section class="history-panel">
+      <button id="btn-history" class="pixel-btn history-toggle" type="button">📜 ประวัติการโต้ตอบ</button>
+      <div id="history-content" hidden>
+        <div class="history-controls">
+          <input type="text" id="history-search" placeholder="ค้นหาในประวัติ...">
+          <select id="history-source">
+            <option value="">ทุกแหล่งที่มา</option>
+            <option value="Dog API">Dog API</option>
+            <option value="Cat Facts API">Cat Facts API</option>
+          </select>
+          <select id="history-kind">
+            <option value="">ทุกประเภท</option>
+            <option value="image">รูปภาพ</option>
+            <option value="fact">ข้อความ</option>
+          </select>
+          <select id="history-order">
+            <option value="desc">ใหม่ → เก่า</option>
+            <option value="asc">เก่า → ใหม่</option>
+          </select>
+        </div>
+        <ul id="history-list"></ul>
+      </div>
+    </section>
+
     <footer class="game-footer">
       Virtual Pet (AI Companion) &middot; Script Programming (CP352301) &middot; Pixel-art web edition
     </footer>
