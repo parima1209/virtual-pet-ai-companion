@@ -10,7 +10,7 @@
 - Sprint 3 (กำหนดส่ง 2/10/69, จะขึ้นเป็น v0.4.0): เชื่อม Front-End กับ Back-End แบบ end-to-end, จัดการ state ระหว่าง session, รองรับหน้าจอมือถือ
 - Final Sprint (กำหนดส่ง 16/10/69, จะขึ้นเป็น v1.0.0): GitHub Actions (CI/CD), unit test ครอบคลุมทุกฟังก์ชันหลัก, ฟีเจอร์ AI/Automation เพิ่มเติม
 
-## [0.3.0] — Sprint 2 — 25/9/69
+## [0.3.0] — Sprint 2 — 16/9/69 (กำหนดส่งจริง 25/9/69)
 
 ### Added
 - เชื่อมต่อ Dog API (`dog.ceo`) และ Cat Facts API (`catfact.ninja`) ผ่านปุ่ม "Interact" แบบสุ่มเลือก พร้อม timeout และจัดการ error ครบทุกกรณี (timeout, connection error, bad response, payload ผิดรูปแบบ)
@@ -28,7 +28,7 @@
 ### Verified
 - ทดสอบเรียก Dog API / Cat Facts API จริงบนเครื่องที่มีอินเทอร์เน็ต (นอก sandbox พัฒนา) — ผ่านทุกกรณี ได้รูปสุนัขและ cat fact จริง บันทึกประวัติถูกต้อง
 
-## [0.2.0] — Pivot — หลังส่ง Sprint 1
+## [0.2.0] — Pivot — 14/9/69
 
 ### Changed
 - เปลี่ยนหน้าตาโปรเจคจาก CLI อย่างเดียว เป็นเว็บสไตล์ Pixel Art Game (Flask) เพิ่มเติม เพื่อให้ตรงกับธีมที่ต้องการมากขึ้น
@@ -38,7 +38,7 @@
 - โฟลเดอร์ `web/` (app.py, templates, static) — หน้าตาใหม่ที่เรียกใช้คลาส `Pet` เดิม
 - สคริปต์ `web/generate_sprites.py` สร้างสไปรต์ Pixel Art (4 สถานะ: idle/happy/hungry/sleepy) ด้วย Pillow
 
-## [0.1.0] — Sprint 1 — 18/9/69
+## [0.1.0] — Sprint 1 — 14/9/69 (กำหนดส่งจริง 18/9/69)
 
 ### Added
 - คลาส `Pet` (`src/pet.py`) จัดการสถานะ hunger, mood, energy (จำกัดค่าให้อยู่ระหว่าง 0-100 เสมอ)
