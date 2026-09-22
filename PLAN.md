@@ -261,7 +261,12 @@ Virtual Pet (AI Companion) คือแอปพลิเคชัน Python ท
 - [x] มี GitHub Actions workflow ที่รัน lint + test อัตโนมัติ และขึ้นสถานะ pass/fail บน GitHub ได้จริง
       (`.github/workflows/ci.yml` — รัน flake8 + pytest ทุกครั้งที่ push/เปิด PR เข้า main — ทดสอบรันคำสั่ง
       เดียวกันในเครื่องแล้วผ่านทั้งคู่ ยังไม่เคยเห็นสถานะจริงบน GitHub เพราะรอ push)
-- [ ] Unit test ครอบคลุมทุกฟังก์ชันหลักของโปรเจค (ทั้ง Business Logic, Data Access, API Integration)
+- [x] Unit test ครอบคลุมทุกฟังก์ชันหลักของโปรเจค (ทั้ง Business Logic, Data Access, API Integration)
+      — รวม 58 เคส: `test_pet.py` (7, Business Logic คลาส `Pet`), `test_advisor.py`
+      (10, Business Logic AI Advisor), `test_history.py` (13, Data Access Layer
+      `interaction_history.json`), `test_web_app.py` (28, Data Access Layer `save_pet`/`load_pet`
+      + Data API Integration แบบ mock ต่อ Dog API/Cat Facts API + HTTP endpoint ทั้งหมด) —
+      รัน `pytest -v` แล้วผ่านครบทุกเคส
 - [x] มีฟีเจอร์ AI/Automation อย่างน้อย 1 อย่างที่ทำงานได้จริงและสาธิตได้ (AI Advisor แบบ rule-based
       ใน `web/advisor.py`, endpoint `/api/advice`, ปุ่ม "🔮 คำแนะนำจาก AI" บนหน้าเว็บ — ทดสอบจริงบนเซิร์ฟเวอร์
       ที่รันจริง 2 รอบ ผลตรงกับที่คำนวณทุกครั้ง)
