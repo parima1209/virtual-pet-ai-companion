@@ -32,7 +32,12 @@
 ### Fixed
 - แก้บรรทัดยาวเกิน 110 ตัวอักษรใน `web/advisor.py` ที่ทำให้ `flake8` ไม่ผ่าน
 
-ยังเหลือ: README ฉบับสมบูรณ์, reports/final_report.md, ทดสอบ responsive mode จริงบนเบราว์เซอร์
+### Changed
+- อัปเดต `README.md` ครบทุกฟีเจอร์ใหม่ (neglect decay, AI Advisor, CI badge), โครงสร้างไฟล์, สถานะ
+  Sprint 3/Final Sprint, และตารางบทบาททีมย้อนหลังทุก Sprint
+
+ยังเหลือก่อนขึ้น v1.0.0: ทดสอบ responsive mode จริงบนเบราว์เซอร์, ทีมตกลงบทบาท/คะแนน Sprint 3 กับ
+Final Sprint ใน `PLAN.md`, reports/final_report.md, และ push ขึ้น GitHub
 
 ## [0.4.0] — Sprint 3 — 22/9/69 (กำหนดส่งจริง 2/10/69)
 
