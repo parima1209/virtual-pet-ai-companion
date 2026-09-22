@@ -158,6 +158,28 @@ body {
   color: var(--muted);
 }
 
+.advisor-panel { margin-top: 10px; }
+.advice-toggle { width: 100%; background: #f9b95a; color: var(--navy); }
+#advice-content {
+  margin-top: 8px;
+  background: #fff;
+  border: 3px solid var(--navy);
+  border-radius: 4px;
+  padding: 10px 12px;
+}
+#advice-headline { margin: 0 0 6px; font-size: 12px; line-height: 1.5; }
+.advice-meta { display: flex; gap: 6px; flex-wrap: wrap; }
+.advice-badge {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 10px;
+  background: var(--cream);
+  border: 2px solid var(--navy);
+  color: var(--navy);
+}
+
 .history-panel { margin-top: 10px; }
 .history-toggle {
   width: 100%;

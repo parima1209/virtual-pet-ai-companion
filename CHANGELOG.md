@@ -10,8 +10,21 @@
 
 ## [Unreleased] — Final Sprint
 
-วางแผนไว้ใน `PLAN.md` ยังไม่เริ่มดำเนินการ:
-- Final Sprint (กำหนดส่ง 16/10/69, จะขึ้นเป็น v1.0.0): GitHub Actions (CI/CD), unit test ครอบคลุมทุกฟังก์ชันหลัก, ฟีเจอร์ AI/Automation เพิ่มเติม
+กำหนดส่ง 16/10/69 (จะขึ้นเป็น v1.0.0) — กำลังดำเนินการ:
+
+### Added
+- **AI Advisor แบบ rule-based** (`web/advisor.py`, endpoint `/api/advice`) — วิเคราะห์สถานะปัจจุบัน
+  (คิดคะแนนความเป็นอยู่ `wellbeing_score` ถ่วงน้ำหนัก mood/hunger/energy) + ความถี่การ Interact ใน 30 นาที
+  ล่าสุดจากประวัติ แล้วทำนายแนวโน้มอารมณ์และแนะนำ action ที่ควรทำต่อไป — ไม่พึ่ง AI API ภายนอก/ไม่ต้องใช้
+  internet เทสได้ deterministic 100% — เพิ่ม UI ปุ่ม "🔮 คำแนะนำจาก AI" ในหน้าเว็บ
+- unit test ใหม่ 11 เคสสำหรับ AI Advisor (`tests/test_advisor.py` 10 เคส + `/api/advice` HTTP 1 เคส)
+  — รวมทั้งโปรเจคเป็น 57 เคส (จาก 46)
+
+### Verified
+- ทดสอบ `/api/advice` จริงบนเซิร์ฟเวอร์ที่รันจริง 2 รอบ (สถานะปกติ แนะนำ feed ถูกต้องตามคะแนน 89/100 และ
+  70/100 ตามลำดับ เมื่อ hunger สูงขึ้น) ตรงกับผลลัพธ์ที่คำนวณจาก `wellbeing_score` ทุกครั้ง
+
+ยังเหลือ: GitHub Actions (CI/CD), unit test ครอบคลุมทุกฟังก์ชันหลัก (ใกล้ครบแล้ว), README ฉบับสมบูรณ์
 
 ## [0.4.0] — Sprint 3 — 22/9/69 (กำหนดส่งจริง 2/10/69)
 

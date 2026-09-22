@@ -258,7 +258,9 @@ Virtual Pet (AI Companion) คือแอปพลิเคชัน Python ท
 ### Definition of Done (DoD)
 - [ ] มี GitHub Actions workflow ที่รัน lint + test อัตโนมัติ และขึ้นสถานะ pass/fail บน GitHub ได้จริง
 - [ ] Unit test ครอบคลุมทุกฟังก์ชันหลักของโปรเจค (ทั้ง Business Logic, Data Access, API Integration)
-- [ ] มีฟีเจอร์ AI/Automation อย่างน้อย 1 อย่างที่ทำงานได้จริงและสาธิตได้
+- [x] มีฟีเจอร์ AI/Automation อย่างน้อย 1 อย่างที่ทำงานได้จริงและสาธิตได้ (AI Advisor แบบ rule-based
+      ใน `web/advisor.py`, endpoint `/api/advice`, ปุ่ม "🔮 คำแนะนำจาก AI" บนหน้าเว็บ — ทดสอบจริงบนเซิร์ฟเวอร์
+      ที่รันจริง 2 รอบ ผลตรงกับที่คำนวณทุกครั้ง)
 - [ ] README อธิบายวิธีติดตั้ง/รัน/ใช้งานครบถ้วน ทั้งเวอร์ชัน CLI และเว็บ
 - [x] เตรียม Project Pitch (เอกสาร + slide) สำหรับนำเสนอเรียบร้อยแล้ว (ทำไปก่อนหน้านี้)
 

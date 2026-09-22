@@ -192,4 +192,34 @@ buttons.forEach((btn) => {
 });
 document.getElementById("btn-interact").addEventListener("click", doInteract);
 
+// ---------------------------------------------------------------------------
+// Final Sprint — AI Advisor (rule-based): /api/advice
+// ---------------------------------------------------------------------------
+const adviceToggleBtn = document.getElementById("btn-advice");
+const adviceContent = document.getElementById("advice-content");
+const adviceHeadline = document.getElementById("advice-headline");
+const adviceScore = document.getElementById("advice-score");
+const adviceRecent = document.getElementById("advice-recent");
+
+async function loadAdvice() {
+  adviceHeadline.textContent = "กำลังวิเคราะห์...";
+  try {
+    const res = await fetch("/api/advice");
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "โหลดคำแนะนำไม่สำเร็จ");
+    adviceHeadline.textContent = data.headline;
+    adviceScore.textContent = `คะแนนความเป็นอยู่ ${data.score}/100`;
+    adviceRecent.textContent = `Interact ใน 30 นาทีล่าสุด: ${data.recent_interactions_30min} ครั้ง`;
+  } catch (err) {
+    adviceHeadline.textContent = "โหลดคำแนะนำไม่สำเร็จ: " + err.message;
+    adviceScore.textContent = "";
+    adviceRecent.textContent = "";
+  }
+}
+
+adviceToggleBtn.addEventListener("click", () => {
+  adviceContent.hidden = !adviceContent.hidden;
+  if (!adviceContent.hidden) loadAdvice();
+});
+
 loadState();

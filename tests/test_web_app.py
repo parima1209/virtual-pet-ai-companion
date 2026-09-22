@@ -346,3 +346,17 @@ def test_load_pet_corrupt_file_returns_default_without_crash(monkeypatch, tmp_pa
 
     assert loaded_pet.name == "Buddy"
     assert loaded_last_updated is None
+
+
+def test_api_advice_endpoint_returns_recommendation(monkeypatch, tmp_path):
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    monkeypatch.setattr(web_app.history, "HISTORY_FILE", str(tmp_path / "interaction_history.json"))
+    monkeypatch.setattr(web_app, "pet", Pet(name="Buddy", hunger=90, mood=50, energy=50))
+    monkeypatch.setattr(web_app, "last_updated", datetime.now(timezone.utc))
+
+    res = web_app.app.test_client().get("/api/advice")
+
+    assert res.status_code == 200
+    data = res.get_json()
+    assert data["recommended_action"] == "feed"
+    assert "Buddy" in data["headline"]

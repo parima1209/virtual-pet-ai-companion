@@ -30,6 +30,7 @@ if PROJECT_ROOT not in sys.path:
 
 from src.pet import Pet  # noqa: E402
 import history  # noqa: E402
+import advisor  # noqa: E402
 
 try:
     import requests
@@ -258,6 +259,17 @@ def api_interact():
     result["interaction"] = content
     result["source"] = api_name
     return jsonify(result)
+
+
+@app.route("/api/advice")
+def api_advice():
+    """
+    Final Sprint — "AI Advisor" (rule-based): คืนคำแนะนำ/ทำนายอารมณ์สัตว์เลี้ยง
+    วิเคราะห์จากสถานะปัจจุบันของ pet และความถี่การ Interact ใน 30 นาทีล่าสุด (web/advisor.py)
+    """
+    apply_neglect_decay()
+    items = history.load_history()
+    return jsonify(advisor.generate_advice(pet, items))
 
 
 @app.route("/api/history")
