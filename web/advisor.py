@@ -89,7 +89,10 @@ def generate_advice(pet, history_items=None, now: datetime = None) -> dict:
     elif action == "interact":
         headline = f"{pet.name} สบายดีทุกอย่าง! ({forecast}, คะแนนความเป็นอยู่ {score}/100)"
     else:
-        headline = f"{pet.name} {forecast.lower()} (คะแนนความเป็นอยู่ {score}/100) แนะนำให้ {_ACTION_LABELS[action]}"
+        headline = (
+            f"{pet.name} {forecast.lower()} (คะแนนความเป็นอยู่ {score}/100) "
+            f"แนะนำให้ {_ACTION_LABELS[action]}"
+        )
 
     return {
         "score": score,

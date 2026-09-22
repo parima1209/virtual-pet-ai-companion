@@ -360,3 +360,13 @@ def test_api_advice_endpoint_returns_recommendation(monkeypatch, tmp_path):
     data = res.get_json()
     assert data["recommended_action"] == "feed"
     assert "Buddy" in data["headline"]
+
+
+def test_index_route_renders_pet_name(monkeypatch, tmp_path):
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    monkeypatch.setattr(web_app, "pet", Pet(name="Mochi", hunger=30, mood=60, energy=90))
+
+    res = web_app.app.test_client().get("/")
+
+    assert res.status_code == 200
+    assert b"Mochi" in res.data
