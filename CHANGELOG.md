@@ -2,15 +2,15 @@
 
 บันทึกการเปลี่ยนแปลงที่สำคัญของโปรเจค Virtual Pet (AI Companion) เรียงจากใหม่ล่าสุดไปเก่าสุด
 รูปแบบอ้างอิงจาก [Keep a Changelog](https://keepachangelog.com/) — เลขเวอร์ชันอิงตาม [Semantic Versioning](https://semver.org/)
-(อยู่ระหว่าง 0.x.0 เพราะยังไม่ถึง Final Sprint — จะขึ้น 1.0.0 เมื่อส่งงานฉบับสมบูรณ์)
+(ขึ้น 1.0.0 แล้วเมื่อโค้ด Final Sprint เสร็จครบทุกข้อใน Definition of Done)
 
 > **กติกาการอัปเดตไฟล์นี้ (ตั้งแต่ Sprint 3):** ทุกครั้งที่ commit โค้ด/ฟีเจอร์จริง ต้องเพิ่มบรรทัดใต้หัวข้อ
 > `[Unreleased]` ในคอมมิตเดียวกันทันที ห้ามเขียนสรุปย้อนหลังทีเดียวตอนจบ Sprint — มี git hook เตือนอัตโนมัติ
 > (`.githooks/pre-commit`, เปิดใช้ด้วย `git config core.hooksPath .githooks`)
 
-## [Unreleased] — Final Sprint
+## [1.0.0] — Final Sprint — 22/9/69 (กำหนดส่งจริง 16/10/69)
 
-กำหนดส่ง 16/10/69 (จะขึ้นเป็น v1.0.0) — กำลังดำเนินการ:
+โค้ดและ DoD ของ Final Sprint ครบสมบูรณ์แล้ว:
 
 ### Added
 - **AI Advisor แบบ rule-based** (`web/advisor.py`, endpoint `/api/advice`) — วิเคราะห์สถานะปัจจุบัน
@@ -40,7 +40,8 @@
 - อัปเดต `README.md` ครบทุกฟีเจอร์ใหม่ (neglect decay, AI Advisor, CI badge), โครงสร้างไฟล์, สถานะ
   Sprint 3/Final Sprint, และตารางบทบาททีมย้อนหลังทุก Sprint
 
-ยังเหลือก่อนขึ้น v1.0.0: ทีมตกลงบทบาท/คะแนน Sprint 3 กับ Final Sprint ใน `PLAN.md`, และ push ขึ้น GitHub
+หมายเหตุ: งานโค้ดทั้งหมดเสร็จสมบูรณ์แล้ว เหลือแค่ส่วนที่ไม่ใช่งานโค้ด — ทีมตกลงบทบาท/คะแนน Sprint 3
+กับ Final Sprint ใน `PLAN.md` (Self-Assessment) และ push commit ล่าสุดขึ้น GitHub ก่อนส่งจริง 16/10/69
 
 ## [0.4.0] — Sprint 3 — 22/9/69 (กำหนดส่งจริง 2/10/69)
 
