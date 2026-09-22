@@ -21,6 +21,10 @@
   — รวมทั้งโปรเจคเป็น 57 เคส (จาก 46)
 
 ### Verified
+- ยืนยัน DoD “Unit test ครอบคลุมทุกฟังก์ชันหลักของโปรเจค (Business Logic, Data Access, API Integration)”
+  ครบแล้ว: `test_pet.py`/`test_advisor.py` = Business Logic, `test_history.py`/ส่วน `save_pet`/`load_pet`
+  ใน `test_web_app.py` = Data Access, ส่วน mock Dog API/Cat Facts API ใน `test_web_app.py` = API
+  Integration — ติ๊ก `[x]` ใน `PLAN.md` แล้ว (ก่อนหน้านี้ลืมติ๊กทั้งที่งานเสร็จแล้ว)
 - ทดสอบ `/api/advice` จริงบนเซิร์ฟเวอร์ที่รันจริง 2 รอบ (สถานะปกติ แนะนำ feed ถูกต้องตามคะแนน 89/100 และ
   70/100 ตามลำดับ เมื่อ hunger สูงขึ้น) ตรงกับผลลัพธ์ที่คำนวณจาก `wellbeing_score` ทุกครั้ง
 
