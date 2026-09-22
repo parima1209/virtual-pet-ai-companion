@@ -8,11 +8,30 @@
 > `[Unreleased]` ในคอมมิตเดียวกันทันที ห้ามเขียนสรุปย้อนหลังทีเดียวตอนจบ Sprint — มี git hook เตือนอัตโนมัติ
 > (`.githooks/pre-commit`, เปิดใช้ด้วย `git config core.hooksPath .githooks`)
 
-## [Unreleased] — Sprint 3 & Final Sprint
+## [Unreleased] — Final Sprint
 
 วางแผนไว้ใน `PLAN.md` ยังไม่เริ่มดำเนินการ:
-- Sprint 3 (กำหนดส่ง 2/10/69, จะขึ้นเป็น v0.4.0): เชื่อม Front-End กับ Back-End แบบ end-to-end, จัดการ state ระหว่าง session, รองรับหน้าจอมือถือ
 - Final Sprint (กำหนดส่ง 16/10/69, จะขึ้นเป็น v1.0.0): GitHub Actions (CI/CD), unit test ครอบคลุมทุกฟังก์ชันหลัก, ฟีเจอร์ AI/Automation เพิ่มเติม
+
+## [0.4.0] — Sprint 3 — 22/9/69 (กำหนดส่งจริง 2/10/69)
+
+### Added
+- ระบบ **Neglect Decay** (`web/app.py`) — ถ้าปล่อยสัตว์เลี้ยงไว้นานโดยไม่กดอะไรเลย hunger จะค่อยๆ เพิ่มขึ้น
+  (+1 ทุก 5 นาทีจริง) และ energy จะค่อยๆ ลดลง (-1 ทุก 10 นาทีจริง) โดยอิงจาก `last_updated` ที่บันทึกไว้ใน
+  `data/pet_state.json` — จำกัดเพดานไว้ที่ 24 ชม. กันค่าพังถ้าปล่อยไว้นานเป็นวันๆ
+- ข้อความเตือน (`neglected`/`warning` ใน response ของ `/api/state`, `/api/action`, `/api/interact`) และแบนเนอร์
+  เตือนบนหน้าเว็บ เมื่อ hunger ≥ 90 หรือ energy ≤ 10
+- unit test ใหม่ 15 เคสสำหรับ Sprint 3/Final Sprint (decay logic 4 เคส, HTTP `/api/action` 4 เคส,
+  `/api/state` 1 เคส, Data Access Layer `save_pet`/`load_pet` roundtrip 3 เคส) — รวมทั้งโปรเจคเป็น 46 เคส (จาก 31)
+
+### Verified
+- ทดสอบ manual แบบครบวงจรจริงผ่าน curl บนเซิร์ฟเวอร์ที่รันจริง (ไม่ใช่แค่ unit test): `/`, `/api/state`,
+  `/api/action` (feed/play/rest/คำสั่งไม่รู้จัก), `/api/history` — ทุก endpoint ตอบถูกต้องตามที่ออกแบบ
+- จำลองปล่อยสัตว์เลี้ยงไว้ 500 นาที (แก้ `last_updated` ในไฟล์ตรงๆ แล้วรีสตาร์ตเซิร์ฟเวอร์) — hunger ขึ้นไปที่ 100,
+  energy ลงไปที่ 0, mood ลดลงจากบทลงโทษ, `neglected: true` พร้อมข้อความเตือนถูกต้องครบทั้งสองกรณี
+
+### Known gaps
+- ยังไม่ได้เปิดเบราว์เซอร์จริงทดสอบ responsive mode บนมือถือ (CSS มี media query รองรับแล้ว แต่รอทีมเช็คด้วยตา)
 
 ## [0.3.0] — Sprint 2 — 16/9/69 (กำหนดส่งจริง 25/9/69)
 

@@ -5,6 +5,7 @@ const sprite = document.getElementById("sprite");
 const petNameEl = document.getElementById("pet-name");
 const logMessage = document.getElementById("log-message");
 const interactionBox = document.getElementById("interaction-box");
+const neglectBanner = document.getElementById("neglect-banner");
 const buttons = document.querySelectorAll(".pixel-btn");
 
 const bars = {
@@ -37,6 +38,14 @@ function renderState(state) {
   if (state.message) {
     logMessage.textContent = state.message;
     logMessage.classList.remove("log-error");
+  }
+
+  // Sprint 3: เตือนเมื่อสัตว์เลี้ยงถูกปล่อยไว้นานจนหิวมาก/พลังงานหมด
+  if (state.neglected && state.warning) {
+    neglectBanner.textContent = "⚠️ " + state.warning;
+    neglectBanner.hidden = false;
+  } else {
+    neglectBanner.hidden = true;
   }
 }
 

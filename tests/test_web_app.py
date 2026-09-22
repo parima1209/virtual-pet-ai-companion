@@ -6,6 +6,7 @@ Unit test สำหรับ logic ฝั่ง Flask web app (web/app.py) โ�
 
 import os
 import sys
+from datetime import datetime, timedelta, timezone
 from unittest.mock import MagicMock, patch
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "web"))
@@ -134,3 +135,214 @@ def test_api_history_search_filter_sort(monkeypatch, tmp_path):
     res = client.get("/api/history?order=asc")
     results = res.get_json()["results"]
     assert results[0]["source"] == "Dog API"
+
+
+# ---------------------------------------------------------------------------
+# Sprint 3 — Unit test สำหรับ neglect decay (ปล่อยสัตว์เลี้ยงไว้นาน -> hunger/energy เปลี่ยนตามเวลาจริง)
+# ---------------------------------------------------------------------------
+def test_apply_neglect_decay_increases_hunger_and_decreases_energy(monkeypatch, tmp_path):
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    fresh_pet = Pet(name="Buddy", hunger=30, mood=50, energy=80)
+    monkeypatch.setattr(web_app, "pet", fresh_pet)
+    now = datetime(2026, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
+    monkeypatch.setattr(web_app, "last_updated", now - timedelta(minutes=30))
+
+    web_app.apply_neglect_decay(now=now)
+
+    # 30 นาที: hunger +6 (ทุก 5 นาที +1), energy -3 (ทุก 10 นาที -1)
+    assert web_app.pet.hunger == 36
+    assert web_app.pet.energy == 77
+    assert web_app.last_updated == now
+
+
+def test_apply_neglect_decay_no_last_updated_sets_baseline_without_changing_stats(tmp_path, monkeypatch):
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    fresh_pet = Pet(name="Buddy", hunger=30, mood=50, energy=80)
+    monkeypatch.setattr(web_app, "pet", fresh_pet)
+    monkeypatch.setattr(web_app, "last_updated", None)
+    now = datetime(2026, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
+
+    web_app.apply_neglect_decay(now=now)
+
+    assert web_app.pet.hunger == 30
+    assert web_app.pet.energy == 80
+    assert web_app.last_updated == now
+
+
+def test_apply_neglect_decay_drops_mood_when_critically_neglected(monkeypatch, tmp_path):
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    fresh_pet = Pet(name="Buddy", hunger=85, mood=50, energy=80)
+    monkeypatch.setattr(web_app, "pet", fresh_pet)
+    now = datetime(2026, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
+    # ปล่อยไว้ 60 นาที -> hunger +12 (85->97, ทะลุเกณฑ์ 90) -> mood ต้องลดลงด้วย
+    monkeypatch.setattr(web_app, "last_updated", now - timedelta(minutes=60))
+
+    web_app.apply_neglect_decay(now=now)
+
+    assert web_app.pet.hunger == 97
+    assert web_app.pet.mood == 45
+
+
+def test_apply_neglect_decay_caps_at_24_hours(monkeypatch, tmp_path):
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    fresh_pet = Pet(name="Buddy", hunger=0, mood=50, energy=100)
+    monkeypatch.setattr(web_app, "pet", fresh_pet)
+    now = datetime(2026, 1, 5, 12, 0, 0, tzinfo=timezone.utc)
+    # ปล่อยไว้ 5 วัน แต่เพดานคือ 24 ชม. (1440 นาที) -> hunger +288 ก็ถูก clamp ที่ 100 อยู่ดี
+    monkeypatch.setattr(web_app, "last_updated", now - timedelta(days=5))
+
+    web_app.apply_neglect_decay(now=now)
+
+    assert web_app.pet.hunger == 100
+    assert web_app.pet.energy == 0
+
+
+def test_state_payload_reports_neglected_and_warning_text(monkeypatch, tmp_path):
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    hungry_pet = Pet(name="Buddy", hunger=95, mood=50, energy=5)
+    monkeypatch.setattr(web_app, "pet", hungry_pet)
+
+    payload = web_app.state_payload()
+
+    assert payload["neglected"] is True
+    assert "Buddy" in payload["warning"]
+    assert "หิว" in payload["warning"]
+    assert "หมดแรง" in payload["warning"]
+
+
+def test_state_payload_not_neglected_when_stats_ok():
+    ok_pet = Pet(name="Buddy", hunger=30, mood=60, energy=80)
+    with patch.object(web_app, "pet", ok_pet):
+        payload = web_app.state_payload()
+    assert payload["neglected"] is False
+    assert payload["warning"] is None
+
+
+def test_api_state_endpoint_applies_decay_from_elapsed_time(monkeypatch, tmp_path):
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    fresh_pet = Pet(name="Buddy", hunger=10, mood=50, energy=100)
+    monkeypatch.setattr(web_app, "pet", fresh_pet)
+    monkeypatch.setattr(
+        web_app, "last_updated", datetime.now(timezone.utc) - timedelta(minutes=50)
+    )
+
+    client = web_app.app.test_client()
+    res = client.get("/api/state")
+
+    assert res.status_code == 200
+    data = res.get_json()
+    # 50 นาที: hunger +10 (10->20), energy -5 (100->95)
+    assert data["hunger"] == 20
+    assert data["energy"] == 95
+
+
+# ---------------------------------------------------------------------------
+# Final Sprint — Unit test ครอบคลุม /api/action (Feed/Play/Rest/คำสั่งไม่รู้จัก) ผ่าน HTTP จริง
+# ---------------------------------------------------------------------------
+def _post_action(client, action):
+    return client.post(
+        "/api/action",
+        json={"action": action},
+        content_type="application/json",
+    )
+
+
+def test_api_action_feed_reduces_hunger(monkeypatch, tmp_path):
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    monkeypatch.setattr(web_app, "pet", Pet(name="Buddy", hunger=50, mood=50, energy=80))
+    monkeypatch.setattr(web_app, "last_updated", datetime.now(timezone.utc))
+
+    res = _post_action(web_app.app.test_client(), "feed")
+
+    assert res.status_code == 200
+    data = res.get_json()
+    assert data["hunger"] == 30
+
+
+def test_api_action_play_reduces_energy_increases_mood(monkeypatch, tmp_path):
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    monkeypatch.setattr(web_app, "pet", Pet(name="Buddy", hunger=30, mood=50, energy=80))
+    monkeypatch.setattr(web_app, "last_updated", datetime.now(timezone.utc))
+
+    res = _post_action(web_app.app.test_client(), "play")
+
+    assert res.status_code == 200
+    data = res.get_json()
+    assert data["energy"] == 65
+    assert data["mood"] == 65
+
+
+def test_api_action_rest_restores_energy(monkeypatch, tmp_path):
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    monkeypatch.setattr(web_app, "pet", Pet(name="Buddy", hunger=30, mood=50, energy=50))
+    monkeypatch.setattr(web_app, "last_updated", datetime.now(timezone.utc))
+
+    res = _post_action(web_app.app.test_client(), "rest")
+
+    assert res.status_code == 200
+    assert res.get_json()["energy"] == 75
+
+
+def test_api_action_unknown_action_returns_400(monkeypatch, tmp_path):
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    monkeypatch.setattr(web_app, "pet", Pet(name="Buddy", hunger=30, mood=50, energy=50))
+    monkeypatch.setattr(web_app, "last_updated", datetime.now(timezone.utc))
+
+    res = _post_action(web_app.app.test_client(), "blahblah")
+
+    assert res.status_code == 400
+    assert "error" in res.get_json()
+
+
+def test_api_state_endpoint_returns_current_pet(monkeypatch, tmp_path):
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    monkeypatch.setattr(web_app, "pet", Pet(name="Mochi", hunger=40, mood=60, energy=90))
+    monkeypatch.setattr(web_app, "last_updated", datetime.now(timezone.utc))
+
+    res = web_app.app.test_client().get("/api/state")
+
+    assert res.status_code == 200
+    data = res.get_json()
+    assert data["name"] == "Mochi"
+    assert data["hunger"] == 40
+
+
+# ---------------------------------------------------------------------------
+# Final Sprint — Unit test สำหรับ Data Access Layer: save_pet / load_pet (JSON persistence)
+# ---------------------------------------------------------------------------
+def test_save_pet_then_load_pet_roundtrip(monkeypatch, tmp_path):
+    state_file = tmp_path / "pet_state.json"
+    monkeypatch.setattr(web_app, "STATE_FILE", str(state_file))
+    p = Pet(name="Mochi", hunger=42, mood=63, energy=77)
+    when = datetime(2026, 3, 1, 9, 30, 0, tzinfo=timezone.utc)
+
+    web_app.save_pet(p, when=when)
+    assert state_file.exists()
+
+    loaded_pet, loaded_last_updated = web_app.load_pet()
+
+    assert loaded_pet.name == "Mochi"
+    assert loaded_pet.hunger == 42
+    assert loaded_pet.mood == 63
+    assert loaded_pet.energy == 77
+    assert loaded_last_updated == when
+
+
+def test_load_pet_missing_file_returns_default_buddy(monkeypatch, tmp_path):
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "does_not_exist.json"))
+
+    loaded_pet, loaded_last_updated = web_app.load_pet()
+
+    assert loaded_pet.name == "Buddy"
+    assert loaded_last_updated is None
+
+
+def test_load_pet_corrupt_file_returns_default_without_crash(monkeypatch, tmp_path):
+    state_file = tmp_path / "pet_state.json"
+    state_file.write_text("{ not valid json", encoding="utf-8")
+    monkeypatch.setattr(web_app, "STATE_FILE", str(state_file))
+
+    loaded_pet, loaded_last_updated = web_app.load_pet()
+
+    assert loaded_pet.name == "Buddy"
+    assert loaded_last_updated is None
