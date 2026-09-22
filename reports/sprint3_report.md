@@ -16,8 +16,8 @@
 - [x] เพิ่มข้อความ/แบนเนอร์เตือนบนหน้าเว็บเมื่อ hunger ≥ 90 หรือ energy ≤ 10 (`neglected`/`warning`
       ใน response ของ `/api/state`, `/api/action`, `/api/interact`)
 - [x] ป้องกันการกดปุ่มรัวๆ ระหว่างรอ API ตอบกลับ (`setButtonsDisabled` ใน `main.js` — ทำไว้ตั้งแต่ Sprint 2 แล้ว)
-- [x] CSS รองรับจอมือถือด้วย responsive layout (การ์ดกว้าง 100% สูงสุด 420px + media query) — **ยังไม่ได้เปิด
-      เบราว์เซอร์จริงทดสอบบีบหน้าจอ** รอทีมช่วยเช็คด้วยตาอีกรอบก่อน Live Demo
+- [x] CSS รองรับจอมือถือด้วย responsive layout (การ์ดกว้าง 100% สูงสุด 420px + media query) — **ทดสอบจริง
+      ด้วย Chrome DevTools responsive mode (iPhone SE) แล้ว ทุกอย่างปกติดี**
 - [x] เพิ่ม unit test ใหม่ 15 เคส ครอบคลุม decay logic, `/api/action` ผ่าน HTTP จริง, และ Data Access Layer
       (`save_pet`/`load_pet` roundtrip)
 
@@ -53,13 +53,12 @@
   ตัวนับรอบ ทำให้ทดสอบง่ายด้วยการ mock เวลา (`monkeypatch` ค่า `now`) ได้ครบทุก edge case โดยไม่ต้องรอเวลาจริง
   ผ่านไปตอนรัน test; การเพิ่มเพดาน 24 ชม. กันไม่ให้ค่าพังหรือคำนวณเพี้ยนถ้ามีคนลืมเปิดโปรเจคไว้หลายวัน
 - **Whoops!** (ปัญหาที่พบและแนวทางแก้ไข): ยังไม่ได้ตกลงบทบาททีมสำหรับ Sprint นี้ (ตาราง "บทบาทในทีม — Sprint 3"
-  ใน `PLAN.md` ยังว่างอยู่) และยังไม่ได้ทดสอบ responsive mode บนเบราว์เซอร์จริง — ทั้งสองเรื่องต้องให้ทีมช่วย
-  ปิดให้ครบก่อนส่งงานจริง
+  ใน `PLAN.md` ยังว่างอยู่) — ต้องให้ทีมช่วยปิดให้ครบก่อนส่งงานจริง (responsive mode ทดสอบแล้วผ่าน ปิดจุดนี้ได้แล้ว)
 - **ลิงก์ Repository / Pull Request:** https://github.com/parima1209/virtual-pet-ai-companion
 
 ## 4. สิ่งที่ต้องทำต่อก่อนส่งงาน Sprint 3 (2/10/69)
+- [x] เปิดเบราว์เซอร์จริง (responsive mode ใน DevTools) ทดสอบหน้าเว็บบนขนาดจอมือถือจริงๆ — ผ่าน ปกติดี
 - [ ] ทีมตกลงบทบาทหมุนเวียน Sprint 3 แล้วกรอกตาราง "บทบาทในทีม — Sprint 3" ใน `PLAN.md`
-- [ ] เปิดเบราว์เซอร์จริง (หรือ responsive mode ใน DevTools) ทดสอบหน้าเว็บบนขนาดจอมือถือจริงๆ อย่างน้อย 1 รอบ
 - [ ] Push โค้ดชุดนี้ขึ้น GitHub (`web/app.py`, `main.js`, `style.css`, `index.html`, เทสใหม่, PLAN.md/CHANGELOG
       ที่อัปเดต, ไฟล์นี้)
 - [ ] คุยกันในทีมแล้วกรอกตาราง Group/Individual Self-Assessment ของ Sprint 3 ใน `PLAN.md`

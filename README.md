@@ -14,7 +14,7 @@
 - [x] **Sprint 2** — Back-End App Dev (API integration, JSON persistence, ประวัติการโต้ตอบ +
   search/filter/sort) — ส่งงาน 25/9/69 (ทดสอบ API จริงบนเครื่องที่มีอินเทอร์เน็ตแล้ว ผ่านทุกกรณี)
 - [~] **Sprint 3** — Full-Stack App Dev — ส่งงาน 2/10/69 — โค้ดหลักเสร็จแล้ว (neglect decay, ยืนยันด้วย
-  manual test จริง) เหลือแค่ทีมช่วยเช็ค responsive บนเบราว์เซอร์จริง + ตกลงบทบาท/คะแนนทีม + push
+  manual test จริง + responsive mode ผ่าน Chrome DevTools แล้ว ปกติดี) เหลือแค่ตกลงบทบาท/คะแนนทีม + push
 - [~] **Final Sprint** — DevOps, CI/CD & AI Integration — ส่งงาน 16/10/69 — GitHub Actions CI, unit test
   ครบ 58 เคส, และ AI Advisor เสร็จแล้ว เหลือ reports/final_report.md + ตกลงคะแนนทีม + push
 

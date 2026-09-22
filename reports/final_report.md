@@ -53,8 +53,8 @@
 - **ลิงก์ Repository / Pull Request:** https://github.com/parima1209/virtual-pet-ai-companion
 
 ## 4. สิ่งที่ต้องทำต่อก่อนส่งงาน Final Sprint (16/10/69)
+- [x] เปิดเบราว์เซอร์จริงทดสอบ responsive mode บนขนาดจอมือถือจริงๆ (ค้างมาจาก Sprint 3) — ผ่าน ปกติดี
 - [ ] Push โค้ดทั้งหมดขึ้น GitHub แล้วเช็คว่า GitHub Actions ขึ้นสถานะ pass สีเขียวจริง
 - [ ] ทีมตกลงบทบาทหมุนเวียน Sprint 3 และ Final Sprint แล้วกรอกตาราง "บทบาทในทีม" ที่เกี่ยวข้องใน `PLAN.md`
-- [ ] เปิดเบราว์เซอร์จริงทดสอบ responsive mode บนขนาดจอมือถือจริงๆ (ค้างมาจาก Sprint 3)
 - [ ] คุยกันในทีมแล้วกรอกตาราง Group/Individual Self-Assessment ของ Sprint 3 และ Final Sprint ใน `PLAN.md`
 - [ ] ซ้อม Live Demo ให้ครบทุกฟีเจอร์ (feed/play/rest/interact, ประวัติ, AI Advisor, neglect decay)

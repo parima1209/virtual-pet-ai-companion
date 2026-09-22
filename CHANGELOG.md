@@ -36,8 +36,7 @@
 - อัปเดต `README.md` ครบทุกฟีเจอร์ใหม่ (neglect decay, AI Advisor, CI badge), โครงสร้างไฟล์, สถานะ
   Sprint 3/Final Sprint, และตารางบทบาททีมย้อนหลังทุก Sprint
 
-ยังเหลือก่อนขึ้น v1.0.0: ทดสอบ responsive mode จริงบนเบราว์เซอร์, ทีมตกลงบทบาท/คะแนน Sprint 3 กับ
-Final Sprint ใน `PLAN.md`, reports/final_report.md, และ push ขึ้น GitHub
+ยังเหลือก่อนขึ้น v1.0.0: ทีมตกลงบทบาท/คะแนน Sprint 3 กับ Final Sprint ใน `PLAN.md`, และ push ขึ้น GitHub
 
 ## [0.4.0] — Sprint 3 — 22/9/69 (กำหนดส่งจริง 2/10/69)
 
@@ -56,8 +55,9 @@ Final Sprint ใน `PLAN.md`, reports/final_report.md, และ push ขึ้
 - จำลองปล่อยสัตว์เลี้ยงไว้ 500 นาที (แก้ `last_updated` ในไฟล์ตรงๆ แล้วรีสตาร์ตเซิร์ฟเวอร์) — hunger ขึ้นไปที่ 100,
   energy ลงไปที่ 0, mood ลดลงจากบทลงโทษ, `neglected: true` พร้อมข้อความเตือนถูกต้องครบทั้งสองกรณี
 
-### Known gaps
-- ยังไม่ได้เปิดเบราว์เซอร์จริงทดสอบ responsive mode บนมือถือ (CSS มี media query รองรับแล้ว แต่รอทีมเช็คด้วยตา)
+### Verified (เพิ่มเติม)
+- ทดสอบ responsive mode จริงบน Chrome DevTools (iPhone SE, กว้าง < 420px) แล้ว ทุกอย่างปกติดี
+  (การ์ด/ปุ่ม/แผงประวัติ/แผงคำแนะนำ AI ไม่ล้นจอ ไม่มี scroll แนวนอน)
 
 ## [0.3.0] — Sprint 2 — 16/9/69 (กำหนดส่งจริง 25/9/69)
 
