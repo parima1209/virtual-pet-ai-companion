@@ -72,6 +72,17 @@ body.is-night .stage {
   display: inline-block;
   transition: transform 0.4s ease;
 }
+.sprite-bob {
+  display: inline-block;
+  animation: idle-bob 2.4s ease-in-out infinite;
+}
+@keyframes idle-bob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-7px) rotate(-2deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sprite-bob { animation: none; }
+}
 .sprite {
   width: 160px;
   height: 160px;

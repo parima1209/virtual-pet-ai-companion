@@ -150,8 +150,8 @@ def test_apply_neglect_decay_increases_hunger_and_decreases_energy(monkeypatch, 
 
     web_app.apply_neglect_decay(now=now)
 
-    # 30 นาที: hunger +6 (ทุก 5 นาที +1), energy -3 (ทุก 10 นาที -1)
-    assert web_app.pet.hunger == 36
+    # 30 นาที: hunger +12 (ทุก 2.5 นาที +1), energy -3 (ทุก 10 นาที -1)
+    assert web_app.pet.hunger == 42
     assert web_app.pet.energy == 77
     assert web_app.last_updated == now
 
@@ -176,12 +176,12 @@ def test_apply_neglect_decay_drops_mood_when_critically_neglected(monkeypatch, t
     fresh_pet = Pet(name="Buddy", hunger=85, mood=50, energy=80)
     monkeypatch.setattr(web_app, "pet", fresh_pet)
     now = datetime(2026, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
-    # ปล่อยไว้ 60 นาที -> hunger +12 (85->97, ทะลุเกณฑ์ 90) -> mood ต้องลดลงด้วย
+    # ปล่อยไว้ 60 นาที -> hunger +24 (85->109 แต่ถูก clamp ที่ 100, ทะลุเกณฑ์ 90) -> mood ต้องลดลงด้วย
     monkeypatch.setattr(web_app, "last_updated", now - timedelta(minutes=60))
 
     web_app.apply_neglect_decay(now=now)
 
-    assert web_app.pet.hunger == 97
+    assert web_app.pet.hunger == 100
     assert web_app.pet.mood == 45
 
 
@@ -234,8 +234,8 @@ def test_api_state_endpoint_applies_decay_from_elapsed_time(monkeypatch, tmp_pat
 
     assert res.status_code == 200
     data = res.get_json()
-    # 50 นาที: hunger +10 (10->20), energy -5 (100->95)
-    assert data["hunger"] == 20
+    # 50 นาที: hunger +20 (10->30, ทุก 2.5 นาที +1), energy -5 (100->95)
+    assert data["hunger"] == 30
     assert data["energy"] == 95
 
 

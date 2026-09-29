@@ -15,7 +15,9 @@
     <section class="stage" id="stage">
       <span id="night-icon" class="night-icon" hidden>🌙</span>
       <div id="sprite-wrap" class="sprite-wrap">
-        <img id="sprite" class="sprite" src="{{ url_for('static', filename='sprites/pet_idle.png') }}" alt="สัตว์เลี้ยงของคุณ">
+        <div class="sprite-bob">
+          <img id="sprite" class="sprite" src="{{ url_for('static', filename='sprites/pet_idle.png') }}" alt="สัตว์เลี้ยงของคุณ">
+        </div>
       </div>
       <div class="name-row">
         <h2 id="pet-name">{{ pet_name }}</h2>
