@@ -147,7 +147,7 @@ virtual-pet-ai-companion/
 - API: Dog API (dog.ceo) และ Cat Facts API (catfact.ninja) ผ่าน `requests`
 - Data Persistence: ไฟล์ JSON (`data/pet_state.json`, `data/interaction_history.json`)
 - AI/Automation: AI Advisor แบบ rule-based (`web/advisor.py`) — ไม่พึ่ง AI API ภายนอก
-- (extra) Gemini API (`gemini-3.8-flash`, ฟรีผ่าน Google AI Studio) สำหรับคุยกับสัตว์เลี้ยง — ตั้งค่า
+- (extra) Gemini API (`gemini-flash-lite-latest`, ฟรีผ่าน Google AI Studio) สำหรับคุยกับสัตว์เลี้ยง — ตั้งค่า
   ผ่าน `.env` (ไม่มีก็ใช้ประโยคสำรองแทนอัตโนมัติ, ไม่ error)
 
 ## ทีมพัฒนา

@@ -18,7 +18,7 @@ try:
 except ImportError:  # pragma: no cover
     requests = None
 
-GEMINI_MODEL = "gemini-3.8-flash"
+GEMINI_MODEL = "gemini-flash-lite-latest"
 GEMINI_API_URL = (
     f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
 )
