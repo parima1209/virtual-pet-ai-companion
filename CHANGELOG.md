@@ -8,12 +8,12 @@
 > `[Unreleased]` ในคอมมิตเดียวกันทันที ห้ามเขียนสรุปย้อนหลังทีเดียวตอนจบ Sprint — มี git hook เตือนอัตโนมัติ
 > (`.githooks/pre-commit`, เปิดใช้ด้วย `git config core.hooksPath .githooks`)
 
-## [Unreleased] — Extra: Lifelike Pet Features
+## [1.0.0] — Final Sprint (ครบพร้อมฟีเจอร์เสริม) — 22/9/69 – 29/9/69 (กำหนดส่งจริง 16/10/69)
 
-ฟีเจอร์เสริมนอกเหนือจาก Definition of Done เดิม (ทำในสาขา `feature/lifelike-pet` แยกจาก `main`)
-เพื่อให้เล่นแล้วรู้สึกเหมือนเลี้ยงสัตว์จริงมากขึ้น:
+โค้ดและ DoD ของ Final Sprint ครบสมบูรณ์แล้ว พร้อมฟีเจอร์เสริมนอกเหนือจาก DoD เดิมที่ทำเพิ่มทีหลัง (สาขา
+`feature/lifelike-pet` ที่ merge เข้า `main` แล้ว) เพื่อให้เล่นแล้วรู้สึกเหมือนเลี้ยงสัตว์จริงมากขึ้น:
 
-### Added
+### Added — Extra: Lifelike Pet Features
 - **ตั้งชื่อสัตว์เลี้ยงได้ (✏️)** — endpoint `/api/rename` ใหม่ พร้อมปุ่มดินสอข้างชื่อในหน้าเว็บ
   ตรวจสอบชื่อว่างและความยาวเกิน 20 ตัวอักษร บันทึกถาวรลง `data/pet_state.json`
 - **โตขึ้นตามเวลาจริง (🐣→🐥→🐓)** — สะสม "แต้มการเติบโต" (`growth_points`) ตามเวลาที่ผ่านไปจริง
@@ -61,11 +61,7 @@
 - รันเซิร์ฟเวอร์จริงทดสอบทุก endpoint ใหม่ผ่าน curl (`/api/state`, bathe, play-dirties, rename,
   rename ชื่อว่าง, chat แบบไม่มี API key) ได้ผลลัพธ์ตรงตามที่ออกแบบทุกกรณี
 
-## [1.0.0] — Final Sprint — 22/9/69 (กำหนดส่งจริง 16/10/69)
-
-โค้ดและ DoD ของ Final Sprint ครบสมบูรณ์แล้ว:
-
-### Added
+### Added — Final Sprint DoD (รอบแรก ก่อนเพิ่มฟีเจอร์เสริม)
 - **AI Advisor แบบ rule-based** (`web/advisor.py`, endpoint `/api/advice`) — วิเคราะห์สถานะปัจจุบัน
   (คิดคะแนนความเป็นอยู่ `wellbeing_score` ถ่วงน้ำหนัก mood/hunger/energy) + ความถี่การ Interact ใน 30 นาที
   ล่าสุดจากประวัติ แล้วทำนายแนวโน้มอารมณ์และแนะนำ action ที่ควรทำต่อไป — ไม่พึ่ง AI API ภายนอก/ไม่ต้องใช้
@@ -83,7 +79,8 @@
 
 ### Added
 - `.github/workflows/ci.yml` — GitHub Actions รัน `flake8` + `pytest` อัตโนมัติทุกครั้งที่ push/เปิด PR
-  เข้า `main` (ยังไม่เคยเห็นสถานะจริงบน GitHub เพราะรอ push ครั้งถัดไป)
+  เข้า `main` — ยืนยันแล้วว่าขึ้นสถานะ ✅ เขียวจริงบน GitHub (Pull Request #1 ผ่านทั้ง flake8 และ pytest
+  87 เคส ก่อน merge เข้า `main`)
 - unit test เพิ่มอีก 1 เคส (`/` index route) — รวมทั้งโปรเจคเป็น 58 เคส (จาก 57)
 
 ### Fixed
@@ -93,8 +90,9 @@
 - อัปเดต `README.md` ครบทุกฟีเจอร์ใหม่ (neglect decay, AI Advisor, CI badge), โครงสร้างไฟล์, สถานะ
   Sprint 3/Final Sprint, และตารางบทบาททีมย้อนหลังทุก Sprint
 
-หมายเหตุ: งานโค้ดทั้งหมดเสร็จสมบูรณ์แล้ว เหลือแค่ส่วนที่ไม่ใช่งานโค้ด — ทีมตกลงบทบาท/คะแนน Sprint 3
-กับ Final Sprint ใน `PLAN.md` (Self-Assessment) และ push commit ล่าสุดขึ้น GitHub ก่อนส่งจริง 16/10/69
+หมายเหตุ: งานโค้ดทั้งหมด (รวมฟีเจอร์เสริม lifelike pet) เสร็จสมบูรณ์แล้ว push + เปิด Pull Request +
+CI ผ่าน + merge เข้า `main` เรียบร้อยแล้ว เหลือแค่ส่วนที่ไม่ใช่งานโค้ด — ทีมตกลงบทบาท/คะแนน Sprint 3
+กับ Final Sprint ใน `PLAN.md` (Self-Assessment) และซ้อม Live Demo ก่อนส่งจริง 16/10/69
 
 ## [0.4.0] — Sprint 3 — 22/9/69 (กำหนดส่งจริง 2/10/69)
 
