@@ -97,6 +97,7 @@ body.is-night .stage {
 .pencil-btn {
   border: 2px solid var(--navy);
   background: var(--cream);
+  color: var(--navy);
   border-radius: 3px;
   font-size: 11px;
   line-height: 1;
@@ -347,6 +348,7 @@ body.is-night .stage {
   padding: 5px 8px;
   border-radius: 6px;
   max-width: 90%;
+  color: var(--ink);
 }
 .chat-line.chat-me {
   background: var(--cream);
@@ -370,20 +372,37 @@ body.is-night .stage {
 }
 .chat-send { padding: 6px 12px; font-size: 11px; }
 
-/* Final Sprint (extra) — โหมดกลางคืน: พื้นหลังหน้าเว็บมืดลงตามเวลาจริง 20:00-06:00 */
+/* Final Sprint (extra) — โหมดกลางคืน: พื้นหลังหน้าเว็บมืดลงตามเวลาจริง 20:00-06:00
+   ตัวหนังสือส่วนใหญ่ (ที่ไม่มีสีของตัวเองกำหนดไว้ตรงๆ) จะรับสีสว่างจาก body ต่อลงมาอัตโนมัติ
+   ส่วนที่กำหนดสีเข้มไว้ตรงๆ (h1/ชื่อสัตว์เลี้ยง/source ในประวัติ ฯลฯ) ต้อง override เป็นสีสว่างเพิ่ม
+   เฉพาะจุด ไม่งั้นจะเป็นตัวหนังสือสีเข้มบนพื้นหลังเข้ม (อ่านไม่ออก/จางมาก) — ส่วนปุ่ม/ป้าย/ช่องกรอกที่
+   พื้นหลังยังคงสว่างเหมือนเดิม (ไม่ได้เปลี่ยนตอนกลางคืน) จะไม่ถูกแตะเลย เพื่อไม่ให้กลายเป็นตัวหนังสือ
+   สว่างบนพื้นหลังสว่าง (อ่านไม่ออกในทางกลับกัน) */
 body.is-night {
   background: #10132b;
+  color: #e8e9f5;
 }
 body.is-night .game-card {
   background: #2a2f52;
-  color: #e8e9f5;
 }
 body.is-night .log-panel,
 body.is-night #advice-content,
 body.is-night #history-content,
 body.is-night #chat-content {
   background: #1d2240;
+}
+body.is-night .game-header h1,
+body.is-night #pet-name,
+body.is-night .fact-text,
+body.is-night .history-source {
   color: #e8e9f5;
+}
+body.is-night .stat-val,
+body.is-night .history-time,
+body.is-night .history-empty,
+body.is-night .game-footer,
+body.is-night .interaction-box .source-tag {
+  color: #a9aed6;
 }
 
 @media (max-width: 420px) {
