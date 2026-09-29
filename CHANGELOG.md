@@ -8,45 +8,13 @@
 > `[Unreleased]` ในคอมมิตเดียวกันทันที ห้ามเขียนสรุปย้อนหลังทีเดียวตอนจบ Sprint — มี git hook เตือนอัตโนมัติ
 > (`.githooks/pre-commit`, เปิดใช้ด้วย `git config core.hooksPath .githooks`)
 
-## [1.0.0] — Final Sprint (ครบพร้อมฟีเจอร์เสริม) (กำหนดส่งจริง 16/10/69)
+## [1.0.0] — Final Sprint (ครบพร้อมฟีเจอร์เสริม) — 29/9/69 (กำหนดส่งจริง 16/10/69)
 
-โค้ดและ DoD ของ Final Sprint ครบสมบูรณ์แล้ว พร้อมฟีเจอร์เสริมนอกเหนือจาก DoD เดิมที่ทำเพิ่มทีหลัง (สาขา
-`feature/lifelike-pet` ที่ merge เข้า `main` แล้ว) แยกบันทึกตามวันที่จริงด้านล่าง (ไม่รวมวันที่ปนกัน):
+โค้ดทั้งหมด (Final Sprint DoD + ฟีเจอร์เสริม lifelike pet) เสร็จสมบูรณ์, push, เปิด Pull Request,
+CI ผ่าน, และ merge เข้า `main` แล้วในวันนี้ — ถือเป็นสถานะ 1.0.0 ตัวจริงที่ส่งงาน (ดู DoD เดิมของ
+Final Sprint ที่ทำไว้ก่อนหน้าใน [0.5.0] ด้านล่าง):
 
-### 22/9/69 — Final Sprint DoD
-
-#### Added
-- **AI Advisor แบบ rule-based** (`web/advisor.py`, endpoint `/api/advice`) — วิเคราะห์สถานะปัจจุบัน
-  (คิดคะแนนความเป็นอยู่ `wellbeing_score` ถ่วงน้ำหนัก mood/hunger/energy) + ความถี่การ Interact ใน 30 นาที
-  ล่าสุดจากประวัติ แล้วทำนายแนวโน้มอารมณ์และแนะนำ action ที่ควรทำต่อไป — ไม่พึ่ง AI API ภายนอก/ไม่ต้องใช้
-  internet เทสได้ deterministic 100% — เพิ่ม UI ปุ่ม "🔮 คำแนะนำจาก AI" ในหน้าเว็บ
-- unit test ใหม่ 11 เคสสำหรับ AI Advisor (`tests/test_advisor.py` 10 เคส + `/api/advice` HTTP 1 เคส)
-  — รวมทั้งโปรเจคเป็น 57 เคส (จาก 46)
-
-#### Verified
-- ยืนยัน DoD “Unit test ครอบคลุมทุกฟังก์ชันหลักของโปรเจค (Business Logic, Data Access, API Integration)”
-  ครบแล้ว: `test_pet.py`/`test_advisor.py` = Business Logic, `test_history.py`/ส่วน `save_pet`/`load_pet`
-  ใน `test_web_app.py` = Data Access, ส่วน mock Dog API/Cat Facts API ใน `test_web_app.py` = API
-  Integration — ติ๊ก `[x]` ใน `PLAN.md` แล้ว (ก่อนหน้านี้ลืมติ๊กทั้งที่งานเสร็จแล้ว)
-- ทดสอบ `/api/advice` จริงบนเซิร์ฟเวอร์ที่รันจริง 2 รอบ (สถานะปกติ แนะนำ feed ถูกต้องตามคะแนน 89/100 และ
-  70/100 ตามลำดับ เมื่อ hunger สูงขึ้น) ตรงกับผลลัพธ์ที่คำนวณจาก `wellbeing_score` ทุกครั้ง
-
-#### Added
-- `.github/workflows/ci.yml` — GitHub Actions รัน `flake8` + `pytest` อัตโนมัติทุกครั้งที่ push/เปิด PR
-  เข้า `main` (ตอนนั้นยังไม่เคยเห็นสถานะจริงบน GitHub เพราะยังไม่ได้ push — ดูผลยืนยันจริงในหัวข้อ 29/9/69
-  ด้านล่าง)
-- unit test เพิ่มอีก 1 เคส (`/` index route) — รวมทั้งโปรเจคเป็น 58 เคส (จาก 57)
-
-#### Fixed
-- แก้บรรทัดยาวเกิน 110 ตัวอักษรใน `web/advisor.py` ที่ทำให้ `flake8` ไม่ผ่าน
-
-#### Changed
-- อัปเดต `README.md` ครบทุกฟีเจอร์ใหม่ (neglect decay, AI Advisor, CI badge), โครงสร้างไฟล์, สถานะ
-  Sprint 3/Final Sprint, และตารางบทบาททีมย้อนหลังทุก Sprint
-
-### 29/9/69 — Extra: Lifelike Pet Features
-
-#### Added
+### Added — Extra: Lifelike Pet Features
 - **ตั้งชื่อสัตว์เลี้ยงได้ (✏️)** — endpoint `/api/rename` ใหม่ พร้อมปุ่มดินสอข้างชื่อในหน้าเว็บ
   ตรวจสอบชื่อว่างและความยาวเกิน 20 ตัวอักษร บันทึกถาวรลง `data/pet_state.json`
 - **โตขึ้นตามเวลาจริง (🐣→🐥→🐓)** — สะสม "แต้มการเติบโต" (`growth_points`) ตามเวลาที่ผ่านไปจริง
@@ -79,7 +47,7 @@
   แน่นน้อยกว่ามาก) ทดสอบเรียกจริงแล้วได้ผลลัพธ์ `200 OK` สำเร็จ เลือกใช้ alias `-latest` แทนเลขเวอร์ชันตรงๆ
   เพื่อให้ระบบชี้ไปโมเดลที่ Google แนะนำล่าสุดเองอัตโนมัติ ลดปัญหาต้องแก้โค้ดซ้ำเวลาโมเดลถูกเลิกใช้ในอนาคต
 
-#### Fixed
+### Fixed
 - พบว่า global state ใหม่ (`cleanliness`) ถ้าไม่ถูก monkeypatch ในเทสเดิมที่จำลองเวลาผ่านไปจริง
   (ไม่ใช่ "เวลาปัจจุบันพอดี") จะอ่านค่าจากไฟล์ `data/pet_state.json` จริงบนเครื่องตอน import แทน ทำให้
   ผลลัพธ์ไม่ deterministic ข้ามเครื่อง/ข้ามรอบรัน — แก้โดย pin ค่า `cleanliness` ที่รู้ค่าแน่นอนใน
@@ -89,7 +57,7 @@
   ตัวหนังสือสีเข้มไปอยู่บนพื้นหลังสีเข้ม อ่านไม่ออก — แก้โดยเพิ่ม override เฉพาะจุดให้ (`web/static/css/style.css`)
   โดยไม่แตะปุ่ม/ป้าย/ช่องกรอกที่พื้นหลังยังคงสว่างเหมือนเดิม (ไม่งั้นจะกลายเป็นตัวหนังสือสว่างบนพื้นหลังสว่างแทน)
 
-#### Verified
+### Verified
 - รันเซิร์ฟเวอร์จริงทดสอบทุก endpoint ใหม่ผ่าน curl (`/api/state`, bathe, play-dirties, rename,
   rename ชื่อว่าง, chat แบบไม่มี API key) ได้ผลลัพธ์ตรงตามที่ออกแบบทุกกรณี
 - push branch `feature/lifelike-pet` ขึ้น GitHub, เปิด Pull Request #1 เข้า `main` แล้วยืนยันว่า
@@ -98,6 +66,39 @@
 หมายเหตุ: งานโค้ดทั้งหมด (รวมฟีเจอร์เสริม lifelike pet) เสร็จสมบูรณ์แล้ว push + เปิด Pull Request +
 CI ผ่าน + merge เข้า `main` เรียบร้อยแล้ว เหลือแค่ส่วนที่ไม่ใช่งานโค้ด — ทีมตกลงบทบาท/คะแนน Sprint 3
 กับ Final Sprint ใน `PLAN.md` (Self-Assessment) และซ้อม Live Demo ก่อนส่งจริง 16/10/69
+
+## [0.5.0] — Final Sprint DoD (ก่อนเพิ่มฟีเจอร์เสริม) — 22/9/69 (กำหนดส่งจริง 16/10/69)
+
+โค้ดและ DoD หลักของ Final Sprint ครบสมบูรณ์แล้ว (ยังไม่รวมฟีเจอร์เสริม lifelike pet ที่ทำเพิ่มทีหลัง
+ดูใน [1.0.0] ด้านบน):
+
+### Added
+- **AI Advisor แบบ rule-based** (`web/advisor.py`, endpoint `/api/advice`) — วิเคราะห์สถานะปัจจุบัน
+  (คิดคะแนนความเป็นอยู่ `wellbeing_score` ถ่วงน้ำหนัก mood/hunger/energy) + ความถี่การ Interact ใน 30 นาที
+  ล่าสุดจากประวัติ แล้วทำนายแนวโน้มอารมณ์และแนะนำ action ที่ควรทำต่อไป — ไม่พึ่ง AI API ภายนอก/ไม่ต้องใช้
+  internet เทสได้ deterministic 100% — เพิ่ม UI ปุ่ม "🔮 คำแนะนำจาก AI" ในหน้าเว็บ
+- unit test ใหม่ 11 เคสสำหรับ AI Advisor (`tests/test_advisor.py` 10 เคส + `/api/advice` HTTP 1 เคส)
+  — รวมทั้งโปรเจคเป็น 57 เคส (จาก 46)
+
+### Verified
+- ยืนยัน DoD “Unit test ครอบคลุมทุกฟังก์ชันหลักของโปรเจค (Business Logic, Data Access, API Integration)”
+  ครบแล้ว: `test_pet.py`/`test_advisor.py` = Business Logic, `test_history.py`/ส่วน `save_pet`/`load_pet`
+  ใน `test_web_app.py` = Data Access, ส่วน mock Dog API/Cat Facts API ใน `test_web_app.py` = API
+  Integration — ติ๊ก `[x]` ใน `PLAN.md` แล้ว (ก่อนหน้านี้ลืมติ๊กทั้งที่งานเสร็จแล้ว)
+- ทดสอบ `/api/advice` จริงบนเซิร์ฟเวอร์ที่รันจริง 2 รอบ (สถานะปกติ แนะนำ feed ถูกต้องตามคะแนน 89/100 และ
+  70/100 ตามลำดับ เมื่อ hunger สูงขึ้น) ตรงกับผลลัพธ์ที่คำนวณจาก `wellbeing_score` ทุกครั้ง
+
+### Added
+- `.github/workflows/ci.yml` — GitHub Actions รัน `flake8` + `pytest` อัตโนมัติทุกครั้งที่ push/เปิด PR
+  เข้า `main` (ตอนนั้นยังไม่เคยเห็นสถานะจริงบน GitHub เพราะยังไม่ได้ push — ดูผลยืนยันจริงใน [1.0.0] ด้านบน)
+- unit test เพิ่มอีก 1 เคส (`/` index route) — รวมทั้งโปรเจคเป็น 58 เคส (จาก 57)
+
+### Fixed
+- แก้บรรทัดยาวเกิน 110 ตัวอักษรใน `web/advisor.py` ที่ทำให้ `flake8` ไม่ผ่าน
+
+### Changed
+- อัปเดต `README.md` ครบทุกฟีเจอร์ใหม่ (neglect decay, AI Advisor, CI badge), โครงสร้างไฟล์, สถานะ
+  Sprint 3/Final Sprint, และตารางบทบาททีมย้อนหลังทุก Sprint
 
 ## [0.4.0] — Sprint 3 — 22/9/69 (กำหนดส่งจริง 2/10/69)
 
