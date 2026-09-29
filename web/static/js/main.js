@@ -2,26 +2,35 @@
 // เรียก REST endpoints ที่ Flask (web/app.py) จัดเตรียมไว้: /api/state, /api/action, /api/interact
 
 const sprite = document.getElementById("sprite");
+const spriteWrap = document.getElementById("sprite-wrap");
+const stageEl = document.getElementById("stage");
 const petNameEl = document.getElementById("pet-name");
 const logMessage = document.getElementById("log-message");
 const interactionBox = document.getElementById("interaction-box");
 const neglectBanner = document.getElementById("neglect-banner");
+const dirtyBanner = document.getElementById("dirty-banner");
+const nightIcon = document.getElementById("night-icon");
+const lifeStageBadge = document.getElementById("life-stage-badge");
 const buttons = document.querySelectorAll(".pixel-btn");
 
 const bars = {
   hunger: document.getElementById("bar-hunger"),
   mood: document.getElementById("bar-mood"),
   energy: document.getElementById("bar-energy"),
+  clean: document.getElementById("bar-clean"),
 };
 const vals = {
   hunger: document.getElementById("val-hunger"),
   mood: document.getElementById("val-mood"),
   energy: document.getElementById("val-energy"),
+  clean: document.getElementById("val-clean"),
 };
 
 function setButtonsDisabled(disabled) {
   buttons.forEach((b) => { b.disabled = disabled; });
 }
+
+const LIFE_STAGE_SCALE = { baby: 0.7, teen: 0.85, adult: 1.0 };
 
 function renderState(state) {
   petNameEl.textContent = state.name;
@@ -35,6 +44,13 @@ function renderState(state) {
     vals[key].textContent = v;
   });
 
+  // Final Sprint (extra) — ความสะอาด
+  if (typeof state.cleanliness === "number") {
+    const v = Math.max(0, Math.min(100, state.cleanliness));
+    bars.clean.style.width = v + "%";
+    vals.clean.textContent = v;
+  }
+
   if (state.message) {
     logMessage.textContent = state.message;
     logMessage.classList.remove("log-error");
@@ -46,6 +62,32 @@ function renderState(state) {
     neglectBanner.hidden = false;
   } else {
     neglectBanner.hidden = true;
+  }
+
+  // Final Sprint (extra) — เตือนเมื่อสัตว์เลี้ยงสกปรกเกินไป + ฝุ่นรอบตัว
+  if (state.dirty && state.dirty_warning) {
+    dirtyBanner.textContent = "💨 " + state.dirty_warning;
+    dirtyBanner.hidden = false;
+    stageEl.classList.add("is-dirty");
+  } else {
+    dirtyBanner.hidden = true;
+    stageEl.classList.remove("is-dirty");
+  }
+
+  // Final Sprint (extra) — กลางวัน/กลางคืน
+  if (state.is_night) {
+    document.body.classList.add("is-night");
+    nightIcon.hidden = false;
+  } else {
+    document.body.classList.remove("is-night");
+    nightIcon.hidden = true;
+  }
+
+  // Final Sprint (extra) — โตขึ้นตามเวลา: badge + ปรับขนาดสไปรต์ตามวัย
+  if (state.life_stage_label) {
+    lifeStageBadge.textContent = state.life_stage_label;
+    const scale = LIFE_STAGE_SCALE[state.life_stage] || 1.0;
+    spriteWrap.style.transform = `scale(${scale})`;
   }
 }
 
@@ -220,6 +262,95 @@ async function loadAdvice() {
 adviceToggleBtn.addEventListener("click", () => {
   adviceContent.hidden = !adviceContent.hidden;
   if (!adviceContent.hidden) loadAdvice();
+});
+
+// ---------------------------------------------------------------------------
+// Final Sprint (extra) — ตั้งชื่อได้: /api/rename
+// ---------------------------------------------------------------------------
+const renameToggleBtn = document.getElementById("btn-rename-toggle");
+const renameForm = document.getElementById("rename-form");
+const renameInput = document.getElementById("rename-input");
+
+renameToggleBtn.addEventListener("click", () => {
+  renameForm.hidden = !renameForm.hidden;
+  if (!renameForm.hidden) {
+    renameInput.value = petNameEl.textContent;
+    renameInput.focus();
+  }
+});
+
+renameForm.addEventListener("submit", async (evt) => {
+  evt.preventDefault();
+  const newName = renameInput.value.trim();
+  if (!newName) return;
+  setButtonsDisabled(true);
+  try {
+    const res = await fetch("/api/rename", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: newName }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      showError(data.error || "เปลี่ยนชื่อไม่สำเร็จ");
+      return;
+    }
+    renderState(data);
+    renameForm.hidden = true;
+  } catch (err) {
+    showError("เชื่อมต่อเซิร์ฟเวอร์ไม่ได้: " + err.message);
+  } finally {
+    setButtonsDisabled(false);
+  }
+});
+
+// ---------------------------------------------------------------------------
+// Final Sprint (extra) — คุยกับสัตว์เลี้ยง: /api/chat (ใช้ Gemini ถ้าตั้งค่าไว้ ไม่งั้นตอบสำรอง)
+// ---------------------------------------------------------------------------
+const chatToggleBtn = document.getElementById("btn-chat");
+const chatContent = document.getElementById("chat-content");
+const chatLog = document.getElementById("chat-log");
+const chatForm = document.getElementById("chat-form");
+const chatInput = document.getElementById("chat-input");
+
+function appendChatLine(who, text) {
+  const line = document.createElement("p");
+  line.className = who === "me" ? "chat-line chat-me" : "chat-line chat-pet";
+  line.textContent = (who === "me" ? "🧑 " : "🐾 ") + text;
+  chatLog.appendChild(line);
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+chatToggleBtn.addEventListener("click", () => {
+  chatContent.hidden = !chatContent.hidden;
+  if (!chatContent.hidden) chatInput.focus();
+});
+
+chatForm.addEventListener("submit", async (evt) => {
+  evt.preventDefault();
+  const msg = chatInput.value.trim();
+  if (!msg) return;
+  appendChatLine("me", msg);
+  chatInput.value = "";
+  chatInput.disabled = true;
+  try {
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: msg }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      appendChatLine("pet", "(" + (data.error || "ตอบไม่ได้ตอนนี้") + ")");
+      return;
+    }
+    appendChatLine("pet", data.reply);
+  } catch (err) {
+    appendChatLine("pet", "(เชื่อมต่อเซิร์ฟเวอร์ไม่ได้: " + err.message + ")");
+  } finally {
+    chatInput.disabled = false;
+    chatInput.focus();
+  }
 });
 
 loadState();

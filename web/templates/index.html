@@ -12,9 +12,20 @@
       <h1>🐾 Virtual Pet <span class="subtitle">(AI Companion)</span></h1>
     </header>
 
-    <section class="stage">
-      <img id="sprite" class="sprite" src="{{ url_for('static', filename='sprites/pet_idle.png') }}" alt="สัตว์เลี้ยงของคุณ">
-      <h2 id="pet-name">{{ pet_name }}</h2>
+    <section class="stage" id="stage">
+      <span id="night-icon" class="night-icon" hidden>🌙</span>
+      <div id="sprite-wrap" class="sprite-wrap">
+        <img id="sprite" class="sprite" src="{{ url_for('static', filename='sprites/pet_idle.png') }}" alt="สัตว์เลี้ยงของคุณ">
+      </div>
+      <div class="name-row">
+        <h2 id="pet-name">{{ pet_name }}</h2>
+        <button id="btn-rename-toggle" class="pencil-btn" type="button" title="เปลี่ยนชื่อ">✏️</button>
+      </div>
+      <span id="life-stage-badge" class="life-stage-badge"></span>
+      <form id="rename-form" class="rename-form" hidden>
+        <input type="text" id="rename-input" maxlength="20" placeholder="ชื่อใหม่...">
+        <button type="submit" class="pixel-btn rename-save">บันทึก</button>
+      </form>
     </section>
 
     <section class="stats">
@@ -33,14 +44,21 @@
         <div class="bar"><div id="bar-energy" class="bar-fill energy"></div></div>
         <span id="val-energy" class="stat-val">--</span>
       </div>
+      <div class="stat-row">
+        <span class="stat-label">🧼 Clean</span>
+        <div class="bar"><div id="bar-clean" class="bar-fill clean"></div></div>
+        <span id="val-clean" class="stat-val">--</span>
+      </div>
     </section>
 
     <div id="neglect-banner" class="neglect-banner" hidden></div>
+    <div id="dirty-banner" class="neglect-banner dirty" hidden></div>
 
     <section class="actions">
       <button class="pixel-btn feed" data-action="feed">🍖 Feed</button>
       <button class="pixel-btn play" data-action="play">🎾 Play</button>
       <button class="pixel-btn rest" data-action="rest">💤 Rest</button>
+      <button class="pixel-btn bathe" data-action="bathe">🛁 Bathe</button>
       <button class="pixel-btn interact" id="btn-interact">✨ Interact</button>
     </section>
 
@@ -57,6 +75,17 @@
           <span id="advice-score" class="advice-badge"></span>
           <span id="advice-recent" class="advice-badge"></span>
         </div>
+      </div>
+    </section>
+
+    <section class="chat-panel">
+      <button id="btn-chat" class="pixel-btn chat-toggle" type="button">💬 คุยกับสัตว์เลี้ยง</button>
+      <div id="chat-content" hidden>
+        <div id="chat-log" class="chat-log"></div>
+        <form id="chat-form" class="chat-form">
+          <input type="text" id="chat-input" maxlength="300" placeholder="พิมพ์คุยกับสัตว์เลี้ยง...">
+          <button type="submit" class="pixel-btn chat-send">ส่ง</button>
+        </form>
       </div>
     </section>
 
