@@ -19,11 +19,14 @@
 - [x] **Sprint 1** — Front-End App Dev (CLI + Pet class เบื้องต้น) — ส่งงาน 18/9/69
 - [x] **Sprint 2** — Back-End App Dev (API integration, JSON persistence, ประวัติการโต้ตอบ +
   search/filter/sort) — ส่งงาน 25/9/69 (ทดสอบ API จริงบนเครื่องที่มีอินเทอร์เน็ตแล้ว ผ่านทุกกรณี)
-- [~] **Sprint 3** — Full-Stack App Dev — ส่งงาน 2/10/69 — โค้ดหลักเสร็จแล้ว (neglect decay, ยืนยันด้วย
-  manual test จริง + responsive mode ผ่าน Chrome DevTools แล้ว ปกติดี) เหลือแค่ตกลงบทบาท/คะแนนทีม + push
-- [~] **Final Sprint** — DevOps, CI/CD & AI Integration — ส่งงาน 16/10/69 — GitHub Actions CI, unit test
-  ครบ 87 เคส (รวมฟีเจอร์เสริม), AI Advisor และ Gemini API จริงเสร็จแล้ว เหลือ reports/final_report.md +
-  ตกลงคะแนนทีม + push
+- [x] **Sprint 3** — Full-Stack App Dev — ส่งงาน 2/10/69 — โค้ดหลักเสร็จแล้ว (neglect decay, ยืนยันด้วย
+  manual test จริง + responsive mode ผ่าน Chrome DevTools แล้ว ปกติดี) push ขึ้น GitHub แล้ว
+- [x] **Final Sprint** — DevOps, CI/CD & AI Integration — ส่งงาน 16/10/69 — GitHub Actions CI (ยืนยันขึ้น
+  เขียวจริงบน GitHub แล้ว), unit test ครบ 87 เคส (รวมฟีเจอร์เสริม lifelike pet), AI Advisor, Gemini API
+  จริง, และ `reports/final_report.md` เสร็จหมดแล้ว push + merge เข้า `main` เรียบร้อย
+
+> เหลือแค่ส่วนที่ไม่ใช่งานโค้ด — ทีมตกลงบทบาทหมุนเวียน + กรอกคะแนน Self-Assessment ของ Sprint 3 และ
+> Final Sprint ใน `PLAN.md` (ทีมจัดการกันเอง)
 
 รายละเอียดแผนงานแต่ละ Sprint ดูที่ [`PLAN.md`](./PLAN.md)
 รายงานผล Sprint 1 ดูที่ [`reports/sprint1_report.md`](./reports/sprint1_report.md)
