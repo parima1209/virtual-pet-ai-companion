@@ -262,14 +262,17 @@ Virtual Pet (AI Companion) คือแอปพลิเคชัน Python ท
       (`.github/workflows/ci.yml` — รัน flake8 + pytest ทุกครั้งที่ push/เปิด PR เข้า main — ทดสอบรันคำสั่ง
       เดียวกันในเครื่องแล้วผ่านทั้งคู่ ยังไม่เคยเห็นสถานะจริงบน GitHub เพราะรอ push)
 - [x] Unit test ครอบคลุมทุกฟังก์ชันหลักของโปรเจค (ทั้ง Business Logic, Data Access, API Integration)
-      — รวม 58 เคส: `test_pet.py` (7, Business Logic คลาส `Pet`), `test_advisor.py`
+      — รวม 87 เคส: `test_pet.py` (7, Business Logic คลาส `Pet`), `test_advisor.py`
       (10, Business Logic AI Advisor), `test_history.py` (13, Data Access Layer
-      `interaction_history.json`), `test_web_app.py` (28, Data Access Layer `save_pet`/`load_pet`
-      + Data API Integration แบบ mock ต่อ Dog API/Cat Facts API + HTTP endpoint ทั้งหมด) —
-      รัน `pytest -v` แล้วผ่านครบทุกเคส
+      `interaction_history.json`), `test_web_app.py` (47, Data Access Layer `save_pet`/`load_pet`
+      + Data API Integration แบบ mock ต่อ Dog API/Cat Facts API + HTTP endpoint ทั้งหมด รวมฟีเจอร์เสริม
+      cleanliness/aging/night/rename/chat), `test_gemini_client.py` (10, mock การเรียก Gemini API ทั้งหมด)
+      — รัน `pytest -v` แล้วผ่านครบทุกเคส
 - [x] มีฟีเจอร์ AI/Automation อย่างน้อย 1 อย่างที่ทำงานได้จริงและสาธิตได้ (AI Advisor แบบ rule-based
       ใน `web/advisor.py`, endpoint `/api/advice`, ปุ่ม "🔮 คำแนะนำจาก AI" บนหน้าเว็บ — ทดสอบจริงบนเซิร์ฟเวอร์
-      ที่รันจริง 2 รอบ ผลตรงกับที่คำนวณทุกครั้ง)
+      ที่รันจริง 2 รอบ ผลตรงกับที่คำนวณทุกครั้ง — เพิ่มเติมนอกเหนือ DoD: เชื่อมต่อ Gemini API ภายนอกจริง
+      (`web/gemini_client.py`, endpoint `/api/chat`) ให้สัตว์เลี้ยงคุยตอบกลับได้ตามอารมณ์ปัจจุบัน มี fallback
+      อัตโนมัติเมื่อไม่มี key/เรียกไม่สำเร็จ ทดสอบเรียก API จริงสำเร็จแล้ว)
 - [x] README อธิบายวิธีติดตั้ง/รัน/ใช้งานครบถ้วน ทั้งเวอร์ชัน CLI และเว็บ (อัปเดตครบทุกฟีเจอร์ใหม่:
       neglect decay, AI Advisor, CI badge, โครงสร้างไฟล์ล่าสุด)
 - [x] เตรียม Project Pitch (เอกสาร + slide) สำหรับนำเสนอเรียบร้อยแล้ว (ทำไปก่อนหน้านี้)

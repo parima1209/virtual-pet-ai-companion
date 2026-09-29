@@ -22,7 +22,8 @@
 - [~] **Sprint 3** — Full-Stack App Dev — ส่งงาน 2/10/69 — โค้ดหลักเสร็จแล้ว (neglect decay, ยืนยันด้วย
   manual test จริง + responsive mode ผ่าน Chrome DevTools แล้ว ปกติดี) เหลือแค่ตกลงบทบาท/คะแนนทีม + push
 - [~] **Final Sprint** — DevOps, CI/CD & AI Integration — ส่งงาน 16/10/69 — GitHub Actions CI, unit test
-  ครบ 58 เคส, และ AI Advisor เสร็จแล้ว เหลือ reports/final_report.md + ตกลงคะแนนทีม + push
+  ครบ 87 เคส (รวมฟีเจอร์เสริม), AI Advisor และ Gemini API จริงเสร็จแล้ว เหลือ reports/final_report.md +
+  ตกลงคะแนนทีม + push
 
 รายละเอียดแผนงานแต่ละ Sprint ดูที่ [`PLAN.md`](./PLAN.md)
 รายงานผล Sprint 1 ดูที่ [`reports/sprint1_report.md`](./reports/sprint1_report.md)
@@ -142,7 +143,7 @@ virtual-pet-ai-companion/
 - Framework Style: Object-Oriented Programming (OOP)
 - Web Framework: Flask (เวอร์ชันเว็บ Pixel Art Game)
 - Pixel Art: Pillow (PIL) สำหรับสร้างสไปรต์
-- Testing: pytest (58 เคส) + flake8 (lint)
+- Testing: pytest (87 เคส) + flake8 (lint)
 - CI/CD: GitHub Actions (`.github/workflows/ci.yml`)
 - API: Dog API (dog.ceo) และ Cat Facts API (catfact.ninja) ผ่าน `requests`
 - Data Persistence: ไฟล์ JSON (`data/pet_state.json`, `data/interaction_history.json`)
