@@ -12,6 +12,9 @@
       (`save_pet`/`load_pet`), Data API Integration (mock), Neglect Decay, และ AI Advisor
 - [x] เพิ่มฟีเจอร์ **AI/Automation** — AI Advisor แบบ rule-based (`web/advisor.py`, endpoint `/api/advice`)
       วิเคราะห์คะแนนความเป็นอยู่ + ความถี่การโต้ตอบ แล้วแนะนำ action ที่ควรทำต่อไป
+- [x] (เพิ่มเติมนอกเหนือ DoD) เชื่อมต่อ **Gemini API ภายนอกจริง** (`web/gemini_client.py`, endpoint
+      `/api/chat`) ให้สัตว์เลี้ยงคุยตอบกลับผู้ใช้ได้ตามอารมณ์ปัจจุบัน มี fallback อัตโนมัติเมื่อไม่มี
+      API key หรือเรียกไม่สำเร็จ ไม่ทำให้แอป crash
 - [x] จัดทำ README ฉบับสมบูรณ์ ครอบคลุมทั้งเวอร์ชัน CLI และเว็บ พร้อมฟีเจอร์ใหม่ทั้งหมด
 - [x] เตรียม Project Pitch (เอกสาร + slide) สำหรับนำเสนอเรียบร้อยแล้ว (ทำไปก่อนหน้านี้)
 - [ ] ยังไม่เคยเห็นสถานะ GitHub Actions รันจริงบน GitHub (รอ push ครั้งถัดไป)
@@ -20,15 +23,17 @@
 ## 2. ผลการทดสอบระบบ (Quality Assurance & Debugging Report)
 
 ### 2.1 Unit Tests (`pytest`)
-รันคำสั่ง `pytest -v` — ผลลัพธ์: **58 passed in 0.46s** (เพิ่มจาก 46 ใน Sprint 3 เป็น 58)
+รันคำสั่ง `pytest -v` — ผลลัพธ์: **87 passed in 0.7s** (เพิ่มจาก 46 ใน Sprint 3 เป็น 58 ตอน DoD ของ Final Sprint และเพิ่มอีกเป็น 87 หลังทำฟีเจอร์เสริม lifelike pet เพิ่มเติม)
 
 | กลุ่มไฟล์ทดสอบ | จำนวนเทส | ครอบคลุม |
 |---|---|---|
 | `tests/test_pet.py` | 7 | คลาส `Pet` |
 | `tests/test_history.py` | 13 | `web/history.py` |
 | `tests/test_advisor.py` | 10 | `web/advisor.py` — AI Advisor แบบ rule-based |
-| `tests/test_web_app.py` | 28 | สไปรต์, `/api/interact`, `/api/history`, neglect decay, `/api/action`,
-  `/api/state`, `save_pet`/`load_pet`, `/api/advice`, `/` index route |
+| `tests/test_web_app.py` | 47 | สไปรต์, `/api/interact`, `/api/history`, neglect decay, `/api/action`,
+  `/api/state`, `save_pet`/`load_pet`, `/api/advice`, `/` index route, ฟีเจอร์เสริม (cleanliness/aging/
+  night/rename/chat) |
+| `tests/test_gemini_client.py` | 10 | `web/gemini_client.py` — mock การเรียก Gemini API ทั้งหมด |
 
 ### 2.2 Lint (`flake8`)
 รันคำสั่ง `flake8 --max-line-length=110 src/ web/ tests/ app.py` — **ไม่มี error** (เจอ 1 บรรทัดยาวเกิน
@@ -40,7 +45,7 @@
 |---|---|---|---|---|
 | `GET /api/advice` (สถานะปกติ) | สถานะเริ่มต้นจาก `data/pet_state.json` | คำนวณคะแนน + แนะนำ action ตรงกับสูตร | ได้คะแนน 89/100 แนะนำ feed ตรงกับที่คำนวณมือ | PASSED |
 | `GET /api/advice` (หิวมาก) | ตั้ง hunger = 92 แล้วรีสตาร์ตเซิร์ฟเวอร์ | คะแนนลดลง แนะนำ feed | ได้คะแนน 70/100 แนะนำ feed ตรงกับสูตร | PASSED |
-| `pytest -v` เต็มชุด | รันทั้งโปรเจค | ผ่านทั้งหมดไม่มี error | 58 passed | PASSED |
+| `pytest -v` เต็มชุด | รันทั้งโปรเจค | ผ่านทั้งหมดไม่มี error | 87 passed | PASSED |
 | `flake8` เต็มโปรเจค | รันทั้ง `src/`, `web/`, `tests/`, `app.py` | ไม่มี lint error | ไม่มี error (หลังแก้ 1 จุด) | PASSED |
 
 ## 3. สรุปบทเรียนประจำสัปดาห์ (Retrospective: Wow! & Whoops!)

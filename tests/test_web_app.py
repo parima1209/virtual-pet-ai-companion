@@ -142,6 +142,7 @@ def test_api_history_search_filter_sort(monkeypatch, tmp_path):
 # ---------------------------------------------------------------------------
 def test_apply_neglect_decay_increases_hunger_and_decreases_energy(monkeypatch, tmp_path):
     monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    monkeypatch.setattr(web_app, "cleanliness", 100)
     fresh_pet = Pet(name="Buddy", hunger=30, mood=50, energy=80)
     monkeypatch.setattr(web_app, "pet", fresh_pet)
     now = datetime(2026, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
@@ -149,8 +150,8 @@ def test_apply_neglect_decay_increases_hunger_and_decreases_energy(monkeypatch, 
 
     web_app.apply_neglect_decay(now=now)
 
-    # 30 นาที: hunger +6 (ทุก 5 นาที +1), energy -3 (ทุก 10 นาที -1)
-    assert web_app.pet.hunger == 36
+    # 30 นาที: hunger +12 (ทุก 2.5 นาที +1), energy -3 (ทุก 10 นาที -1)
+    assert web_app.pet.hunger == 42
     assert web_app.pet.energy == 77
     assert web_app.last_updated == now
 
@@ -171,20 +172,22 @@ def test_apply_neglect_decay_no_last_updated_sets_baseline_without_changing_stat
 
 def test_apply_neglect_decay_drops_mood_when_critically_neglected(monkeypatch, tmp_path):
     monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    monkeypatch.setattr(web_app, "cleanliness", 100)
     fresh_pet = Pet(name="Buddy", hunger=85, mood=50, energy=80)
     monkeypatch.setattr(web_app, "pet", fresh_pet)
     now = datetime(2026, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
-    # ปล่อยไว้ 60 นาที -> hunger +12 (85->97, ทะลุเกณฑ์ 90) -> mood ต้องลดลงด้วย
+    # ปล่อยไว้ 60 นาที -> hunger +24 (85->109 แต่ถูก clamp ที่ 100, ทะลุเกณฑ์ 90) -> mood ต้องลดลงด้วย
     monkeypatch.setattr(web_app, "last_updated", now - timedelta(minutes=60))
 
     web_app.apply_neglect_decay(now=now)
 
-    assert web_app.pet.hunger == 97
+    assert web_app.pet.hunger == 100
     assert web_app.pet.mood == 45
 
 
 def test_apply_neglect_decay_caps_at_24_hours(monkeypatch, tmp_path):
     monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    monkeypatch.setattr(web_app, "cleanliness", 100)
     fresh_pet = Pet(name="Buddy", hunger=0, mood=50, energy=100)
     monkeypatch.setattr(web_app, "pet", fresh_pet)
     now = datetime(2026, 1, 5, 12, 0, 0, tzinfo=timezone.utc)
@@ -231,8 +234,8 @@ def test_api_state_endpoint_applies_decay_from_elapsed_time(monkeypatch, tmp_pat
 
     assert res.status_code == 200
     data = res.get_json()
-    # 50 นาที: hunger +10 (10->20), energy -5 (100->95)
-    assert data["hunger"] == 20
+    # 50 นาที: hunger +20 (10->30, ทุก 2.5 นาที +1), energy -5 (100->95)
+    assert data["hunger"] == 30
     assert data["energy"] == 95
 
 
@@ -370,3 +373,234 @@ def test_index_route_renders_pet_name(monkeypatch, tmp_path):
 
     assert res.status_code == 200
     assert b"Mochi" in res.data
+
+
+# ---------------------------------------------------------------------------
+# Final Sprint (extra) — Cleanliness: ความสะอาดลดลงตามเวลา + อาบน้ำ + อารมณ์เสียเมื่อสกปรกมาก
+# ---------------------------------------------------------------------------
+def test_apply_neglect_decay_reduces_cleanliness_over_time(monkeypatch, tmp_path):
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    monkeypatch.setattr(web_app, "cleanliness", 100)
+    monkeypatch.setattr(web_app, "pet", Pet(name="Buddy", hunger=30, mood=50, energy=80))
+    now = datetime(2026, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
+    monkeypatch.setattr(web_app, "last_updated", now - timedelta(minutes=40))
+
+    web_app.apply_neglect_decay(now=now)
+
+    # 40 นาที: cleanliness -5 (ทุก 8 นาที -1)
+    assert web_app.cleanliness == 95
+
+
+def test_apply_neglect_decay_drops_mood_when_too_dirty(monkeypatch, tmp_path):
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    monkeypatch.setattr(web_app, "cleanliness", 32)
+    monkeypatch.setattr(web_app, "pet", Pet(name="Buddy", hunger=10, mood=50, energy=90))
+    now = datetime(2026, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
+    # ปล่อยไว้ 40 นาที -> cleanliness -5 (32->27, ต่ำกว่าเกณฑ์สกปรก 30) -> mood ต้องลดลงด้วย
+    monkeypatch.setattr(web_app, "last_updated", now - timedelta(minutes=40))
+
+    web_app.apply_neglect_decay(now=now)
+
+    assert web_app.cleanliness == 27
+    assert web_app.pet.mood == 47
+
+
+def test_api_action_bathe_increases_cleanliness_and_mood(monkeypatch, tmp_path):
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    monkeypatch.setattr(web_app, "cleanliness", 20)
+    monkeypatch.setattr(web_app, "pet", Pet(name="Buddy", hunger=30, mood=50, energy=80))
+    monkeypatch.setattr(web_app, "last_updated", datetime.now(timezone.utc))
+
+    res = _post_action(web_app.app.test_client(), "bathe")
+
+    assert res.status_code == 200
+    data = res.get_json()
+    assert data["cleanliness"] == 60
+    assert data["mood"] == 55
+    assert data["dirty"] is False
+
+
+def test_api_action_play_dirties_pet(monkeypatch, tmp_path):
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    monkeypatch.setattr(web_app, "cleanliness", 100)
+    monkeypatch.setattr(web_app, "pet", Pet(name="Buddy", hunger=30, mood=50, energy=80))
+    monkeypatch.setattr(web_app, "last_updated", datetime.now(timezone.utc))
+
+    res = _post_action(web_app.app.test_client(), "play")
+
+    assert res.status_code == 200
+    assert res.get_json()["cleanliness"] == 90
+
+
+# ---------------------------------------------------------------------------
+# Final Sprint (extra) — กลางวัน/กลางคืน: เล่นตอนดึกได้ mood เพิ่มแค่ครึ่งเดียว
+# ---------------------------------------------------------------------------
+def test_api_action_play_at_night_gives_half_mood_gain(monkeypatch, tmp_path):
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    monkeypatch.setattr(web_app, "cleanliness", 100)
+    monkeypatch.setattr(web_app, "pet", Pet(name="Buddy", hunger=30, mood=50, energy=80))
+    monkeypatch.setattr(web_app, "last_updated", datetime.now(timezone.utc))
+    monkeypatch.setattr(web_app, "is_night_time", lambda now=None: True)
+
+    res = _post_action(web_app.app.test_client(), "play")
+
+    assert res.status_code == 200
+    data = res.get_json()
+    # ปกติ play() ให้ mood +15 (50->65) แต่ตอนกลางคืนได้แค่ครึ่งเดียว -> +7 (50->57)
+    assert data["mood"] == 57
+    assert "ง่วง" in data["message"]
+
+
+def test_is_night_time_true_for_midnight_local():
+    now = datetime(2026, 1, 1, 0, 0, 0, tzinfo=timezone.utc).astimezone().replace(hour=0)
+    assert web_app.is_night_time(now.astimezone(timezone.utc)) is True
+
+
+def test_is_night_time_false_for_noon_local():
+    now = datetime(2026, 1, 1, 0, 0, 0, tzinfo=timezone.utc).astimezone().replace(hour=12)
+    assert web_app.is_night_time(now.astimezone(timezone.utc)) is False
+
+
+# ---------------------------------------------------------------------------
+# Final Sprint (extra) — โตขึ้นตามเวลา: baby -> teen -> adult
+# ---------------------------------------------------------------------------
+def test_life_stage_for_thresholds():
+    assert web_app.life_stage_for(0) == "baby"
+    assert web_app.life_stage_for(web_app.STAGE_TEEN_POINTS - 1) == "baby"
+    assert web_app.life_stage_for(web_app.STAGE_TEEN_POINTS) == "teen"
+    assert web_app.life_stage_for(web_app.STAGE_ADULT_POINTS - 1) == "teen"
+    assert web_app.life_stage_for(web_app.STAGE_ADULT_POINTS) == "adult"
+
+
+def test_care_quality_perfect_care_is_one(monkeypatch):
+    monkeypatch.setattr(web_app, "pet", Pet(name="Buddy", hunger=0, mood=100, energy=100))
+    monkeypatch.setattr(web_app, "cleanliness", 100)
+    assert web_app.care_quality() == 1.0
+
+
+def test_care_quality_worst_care_is_zero(monkeypatch):
+    monkeypatch.setattr(web_app, "pet", Pet(name="Buddy", hunger=100, mood=0, energy=0))
+    monkeypatch.setattr(web_app, "cleanliness", 0)
+    assert web_app.care_quality() == 0.0
+
+
+def test_apply_growth_scales_with_care_quality(monkeypatch):
+    monkeypatch.setattr(web_app, "pet", Pet(name="Buddy", hunger=0, mood=100, energy=100))
+    monkeypatch.setattr(web_app, "cleanliness", 100)
+    monkeypatch.setattr(web_app, "growth_points", 0.0)
+
+    web_app.apply_growth(100)  # 100 นาที คุณภาพเต็ม 1.0 -> คูณ 1.5 เท่า
+
+    assert web_app.growth_points == 150.0
+
+
+def test_apply_growth_still_grows_slowly_when_care_is_worst(monkeypatch):
+    monkeypatch.setattr(web_app, "pet", Pet(name="Buddy", hunger=100, mood=0, energy=0))
+    monkeypatch.setattr(web_app, "cleanliness", 0)
+    monkeypatch.setattr(web_app, "growth_points", 0.0)
+
+    web_app.apply_growth(100)  # คุณภาพ 0.0 -> คูณแค่ 0.5 เท่า (ยังโตอยู่ แต่ช้าลง)
+
+    assert web_app.growth_points == 50.0
+
+
+def test_apply_neglect_decay_accumulates_growth_points(monkeypatch, tmp_path):
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    monkeypatch.setattr(web_app, "cleanliness", 100)
+    monkeypatch.setattr(web_app, "growth_points", 0.0)
+    monkeypatch.setattr(web_app, "pet", Pet(name="Buddy", hunger=0, mood=100, energy=100))
+    now = datetime(2026, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
+    monkeypatch.setattr(web_app, "last_updated", now - timedelta(minutes=100))
+
+    web_app.apply_neglect_decay(now=now)
+
+    assert web_app.growth_points > 0
+
+
+def test_state_payload_includes_lifelike_fields(monkeypatch):
+    monkeypatch.setattr(web_app, "pet", Pet(name="Buddy", hunger=30, mood=60, energy=80))
+    monkeypatch.setattr(web_app, "cleanliness", 100)
+    monkeypatch.setattr(web_app, "growth_points", 0.0)
+
+    payload = web_app.state_payload()
+
+    assert payload["cleanliness"] == 100
+    assert payload["dirty"] is False
+    assert payload["life_stage"] == "baby"
+    assert "is_night" in payload
+    assert "growth_points" in payload
+
+
+# ---------------------------------------------------------------------------
+# Final Sprint (extra) — ตั้งชื่อได้: /api/rename
+# ---------------------------------------------------------------------------
+def test_api_rename_success(monkeypatch, tmp_path):
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    monkeypatch.setattr(web_app, "pet", Pet(name="Buddy", hunger=30, mood=50, energy=80))
+    monkeypatch.setattr(web_app, "last_updated", datetime.now(timezone.utc))
+
+    res = web_app.app.test_client().post(
+        "/api/rename", json={"name": "Mochi"}, content_type="application/json"
+    )
+
+    assert res.status_code == 200
+    data = res.get_json()
+    assert data["name"] == "Mochi"
+    assert web_app.pet.name == "Mochi"
+
+
+def test_api_rename_empty_name_returns_400(monkeypatch, tmp_path):
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    monkeypatch.setattr(web_app, "pet", Pet(name="Buddy", hunger=30, mood=50, energy=80))
+    monkeypatch.setattr(web_app, "last_updated", datetime.now(timezone.utc))
+
+    res = web_app.app.test_client().post(
+        "/api/rename", json={"name": "   "}, content_type="application/json"
+    )
+
+    assert res.status_code == 400
+
+
+def test_api_rename_too_long_returns_400(monkeypatch, tmp_path):
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    monkeypatch.setattr(web_app, "pet", Pet(name="Buddy", hunger=30, mood=50, energy=80))
+    monkeypatch.setattr(web_app, "last_updated", datetime.now(timezone.utc))
+
+    res = web_app.app.test_client().post(
+        "/api/rename", json={"name": "x" * 30}, content_type="application/json"
+    )
+
+    assert res.status_code == 400
+
+
+# ---------------------------------------------------------------------------
+# Final Sprint (extra) — คุยกับสัตว์เลี้ยง: /api/chat (mock gemini_client เพื่อไม่ต้องพึ่งอินเทอร์เน็ตจริง)
+# ---------------------------------------------------------------------------
+def test_api_chat_returns_reply_from_gemini_client(monkeypatch, tmp_path):
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    monkeypatch.setattr(web_app, "pet", Pet(name="Buddy", hunger=30, mood=50, energy=80))
+    monkeypatch.setattr(web_app, "last_updated", datetime.now(timezone.utc))
+    monkeypatch.setattr(
+        web_app.gemini_client, "get_reply", lambda *a, **k: ("หวัดดีจ้า!", "fallback")
+    )
+
+    res = web_app.app.test_client().post(
+        "/api/chat", json={"message": "สวัสดี"}, content_type="application/json"
+    )
+
+    assert res.status_code == 200
+    data = res.get_json()
+    assert data["reply"] == "หวัดดีจ้า!"
+    assert data["source"] == "fallback"
+
+
+def test_api_chat_empty_message_returns_400(monkeypatch, tmp_path):
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    monkeypatch.setattr(web_app, "pet", Pet(name="Buddy", hunger=30, mood=50, energy=80))
+    monkeypatch.setattr(web_app, "last_updated", datetime.now(timezone.utc))
+
+    res = web_app.app.test_client().post(
+        "/api/chat", json={"message": "  "}, content_type="application/json"
+    )
+
+    assert res.status_code == 400
