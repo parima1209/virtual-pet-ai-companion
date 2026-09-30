@@ -8,6 +8,15 @@
 > `[Unreleased]` ในคอมมิตเดียวกันทันที ห้ามเขียนสรุปย้อนหลังทีเดียวตอนจบ Sprint — มี git hook เตือนอัตโนมัติ
 > (`.githooks/pre-commit`, เปิดใช้ด้วย `git config core.hooksPath .githooks`)
 
+## [Unreleased]
+
+### Fixed
+- **แก้ race condition ในการบันทึกประวัติการโต้ตอบ (`web/history.py`)** — พบจากการทดสอบยิง
+  `/api/interact` พร้อมกันจริง 30 ครั้งบนเครื่องจริง (1/10/69) ว่าไฟล์ `data/interaction_history.json`
+  เพี้ยนและประวัติเก่าหายหมดได้ถ้ามี 2 request เขียนไฟล์ชนกัน แก้โดยเพิ่ม file lock ครอบ
+  read-modify-write ใน `add_entry()` และเปลี่ยน `save_history()` ให้เขียนไฟล์แบบ atomic
+  (รายละเอียดเต็มดู `reports/sprint2_report.md` หัวข้อ 4.2) — `pytest` ยัง 87 passed, `flake8` ผ่าน
+
 ## [1.0.0] — Final Sprint (ครบพร้อมฟีเจอร์เสริม) — 29/9/69 (กำหนดส่งจริง 16/10/69)
 
 โค้ดทั้งหมด (Final Sprint DoD + ฟีเจอร์เสริม lifelike pet) เสร็จสมบูรณ์, push, เปิด Pull Request,
