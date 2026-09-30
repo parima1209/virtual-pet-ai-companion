@@ -2,8 +2,8 @@
 
 - **ชื่อโปรเจกต์:** Virtual Pet (AI Companion)
 - **สัปดาห์ที่:** 4 (Final Sprint: DevOps, CI/CD & AI Integration)
-- **สมาชิกในทีม:** แคร์, ปริม, อาอิง, ยีนส์ — _(ยังไม่ได้ตกลงหมุนเวียนบทบาทรอบนี้ รอทีมคุยกันแล้วกรอกในตาราง
-  "บทบาทในทีม — Final Sprint" ใน `PLAN.md`)_
+- **สมาชิกในทีม:** Team Leader อาอิง, Planner ยีนส์, Coder ปริม, Debugger/QA แคร์ (ดูตาราง
+  "บทบาทในทีม — Final Sprint" ใน `PLAN.md`)
 
 ## 1. สรุปความก้าวหน้าของงาน (Sprint Progress Summary)
 - [x] ตั้งค่า GitHub Actions (`.github/workflows/ci.yml`) ให้รัน `flake8` + `pytest` อัตโนมัติทุกครั้งที่
@@ -17,8 +17,9 @@
       API key หรือเรียกไม่สำเร็จ ไม่ทำให้แอป crash
 - [x] จัดทำ README ฉบับสมบูรณ์ ครอบคลุมทั้งเวอร์ชัน CLI และเว็บ พร้อมฟีเจอร์ใหม่ทั้งหมด
 - [x] เตรียม Project Pitch (เอกสาร + slide) สำหรับนำเสนอเรียบร้อยแล้ว (ทำไปก่อนหน้านี้)
-- [ ] ยังไม่เคยเห็นสถานะ GitHub Actions รันจริงบน GitHub (รอ push ครั้งถัดไป)
-- [ ] ทีมยังไม่ได้ตกลงบทบาทหมุนเวียนและคะแนน Self-Assessment ของ Final Sprint
+- [x] ยืนยันสถานะ GitHub Actions ขึ้นเขียวจริงบน GitHub แล้ว (หลัง push + เปิด Pull Request — ดูรายละเอียด
+      ใน `CHANGELOG.md` เวอร์ชัน 1.0.0)
+- [x] ทีมตกลงบทบาทหมุนเวียนและกรอกคะแนน Self-Assessment ของ Final Sprint ครบแล้ว — ดูหัวข้อ 6 ด้านล่าง
 
 ## 2. ผลการทดสอบระบบ (Quality Assurance & Debugging Report)
 
@@ -59,9 +60,12 @@
 
 ## 4. สิ่งที่ต้องทำต่อก่อนส่งงาน Final Sprint (16/10/69)
 - [x] เปิดเบราว์เซอร์จริงทดสอบ responsive mode บนขนาดจอมือถือจริงๆ (ค้างมาจาก Sprint 3) — ผ่าน ปกติดี
-- [ ] Push โค้ดทั้งหมดขึ้น GitHub แล้วเช็คว่า GitHub Actions ขึ้นสถานะ pass สีเขียวจริง
-- [ ] ทีมตกลงบทบาทหมุนเวียน Sprint 3 และ Final Sprint แล้วกรอกตาราง "บทบาทในทีม" ที่เกี่ยวข้องใน `PLAN.md`
-- [ ] คุยกันในทีมแล้วกรอกตาราง Group/Individual Self-Assessment ของ Sprint 3 และ Final Sprint ใน `PLAN.md`
+- [x] Push โค้ดทั้งหมดขึ้น GitHub แล้ว — เปิด Pull Request, ยืนยันสถานะ CI ขึ้นเขียวจริง และ merge เข้า
+      `main` สำเร็จ (ดูรายละเอียดใน `CHANGELOG.md` เวอร์ชัน 1.0.0)
+- [x] ทีมตกลงบทบาทหมุนเวียน Sprint 3 และ Final Sprint แล้ว — กรอกตาราง "บทบาทในทีม" ที่เกี่ยวข้องใน
+      `PLAN.md` ครบแล้ว
+- [x] กรอกตาราง Group/Individual Self-Assessment ของ Sprint 3 (ดูที่ `reports/sprint3_report.md`) และ
+      Final Sprint (ดูหัวข้อ 6 ด้านล่าง) ครบแล้ว
 - [ ] ซ้อม Live Demo ให้ครบทุกฟีเจอร์ (feed/play/rest/interact, ประวัติ, AI Advisor, neglect decay)
 
 ## 5. ปัญหาทางเทคนิคที่เจอและวิธีแก้ไข (Technical Issues & Fixes)

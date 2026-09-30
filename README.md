@@ -25,13 +25,14 @@
   เขียวจริงบน GitHub แล้ว), unit test ครบ 87 เคส (รวมฟีเจอร์เสริม lifelike pet), AI Advisor, Gemini API
   จริง, และ `reports/final_report.md` เสร็จหมดแล้ว push + merge เข้า `main` เรียบร้อย
 
-> เหลือแค่ส่วนที่ไม่ใช่งานโค้ด — ทีมตกลงบทบาทหมุนเวียน + กรอกคะแนน Self-Assessment ของ Sprint 3 และ
-> Final Sprint ใน `PLAN.md` (ทีมจัดการกันเอง)
+> ทุกอย่างเสร็จสมบูรณ์แล้ว รวมถึงบทบาททีมและการประเมินตนเองของทุก Sprint (ดูรายละเอียดในไฟล์รายงาน
+> แต่ละ Sprint ด้านล่าง) เหลือแค่ซ้อม Live Demo ให้ครบทุกฟีเจอร์ก่อนส่งงานจริง 16/10/69
 
 รายละเอียดแผนงานแต่ละ Sprint ดูที่ [`PLAN.md`](./PLAN.md)
 รายงานผล Sprint 1 ดูที่ [`reports/sprint1_report.md`](./reports/sprint1_report.md)
 รายงานผล Sprint 2 ดูที่ [`reports/sprint2_report.md`](./reports/sprint2_report.md)
 รายงานผล Sprint 3 ดูที่ [`reports/sprint3_report.md`](./reports/sprint3_report.md)
+รายงานผล Final Sprint ดูที่ [`reports/final_report.md`](./reports/final_report.md)
 
 ## วิธีติดตั้งและใช้งาน
 ```bash
@@ -132,7 +133,8 @@ virtual-pet-ai-companion/
 ├── reports/
 │   ├── sprint1_report.md       # รายงานผล Sprint 1
 │   ├── sprint2_report.md       # รายงานผล Sprint 2
-│   └── sprint3_report.md       # รายงานผล Sprint 3
+│   ├── sprint3_report.md       # รายงานผล Sprint 3
+│   └── final_report.md         # รายงานผล Final Sprint
 ├── .githooks/pre-commit         # เตือนเมื่อ commit โค้ดแล้วลืมอัปเดต CHANGELOG.md
 ├── .env.example                  # ตัวอย่างไฟล์ตั้งค่า GEMINI_API_KEY (คัดลอกเป็น .env แล้วใส่รหัสจริง)
 ├── PLAN.md                      # แผนงานและ Definition of Done ราย Sprint
@@ -161,7 +163,7 @@ virtual-pet-ai-companion/
 |---|---|---|---|---|
 | Sprint 1 | ยีนส์ | อาอิง | แคร์ | ปริม |
 | Sprint 2 | แคร์ | ปริม | อาอิง | ยีนส์ |
-| Sprint 3 | _(รอทีมตกลง)_ | _(รอทีมตกลง)_ | _(รอทีมตกลง)_ | _(รอทีมตกลง)_ |
-| Final Sprint | _(รอทีมตกลง)_ | _(รอทีมตกลง)_ | _(รอทีมตกลง)_ | _(รอทีมตกลง)_ |
+| Sprint 3 | ปริม | แคร์ | ยีนส์ | อาอิง |
+| Final Sprint | อาอิง | ยีนส์ | ปริม | แคร์ |
 
 **Repository:** https://github.com/parima1209/virtual-pet-ai-companion
