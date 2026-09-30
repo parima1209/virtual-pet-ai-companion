@@ -214,6 +214,9 @@ Virtual Pet (AI Companion) คือแอปพลิเคชัน Python ท
       แผงคำแนะนำ AI ไม่ล้นจอ ไม่มี scroll แนวนอน)
 - [x] ทดสอบ manual แบบครบวงจร (เปิดเกม → feed/play/rest/interact → ปิด/เปิดใหม่) อย่างน้อย 1 รอบ พร้อมบันทึกผล (รันจริงผ่าน curl ครบทุก endpoint รวม /api/history และกรณี invalid action คืน 400 — ดูผลละเอียดใน `reports/sprint3_report.md`)
 
+> **ปัญหาทางเทคนิคที่เจอและวิธีแก้ไขระหว่าง Sprint นี้:** ดูตารางละเอียดได้ในหัวข้อ 5 ของ
+> `reports/sprint3_report.md`
+
 ### บทบาทในทีม — Sprint 3
 | บทบาท | สมาชิก | หน้าที่ Sprint 3 |
 |---|---|---|
@@ -292,6 +295,9 @@ Virtual Pet (AI Companion) คือแอปพลิเคชัน Python ท
 - [x] README อธิบายวิธีติดตั้ง/รัน/ใช้งานครบถ้วน ทั้งเวอร์ชัน CLI และเว็บ (อัปเดตครบทุกฟีเจอร์ใหม่:
       neglect decay, AI Advisor, CI badge, โครงสร้างไฟล์ล่าสุด)
 - [x] เตรียม Project Pitch (เอกสาร + slide) สำหรับนำเสนอเรียบร้อยแล้ว (ทำไปก่อนหน้านี้)
+
+> **ปัญหาทางเทคนิคที่เจอและวิธีแก้ไขระหว่าง Sprint นี้:** ดูตารางละเอียดได้ในหัวข้อ 5 ของ
+> `reports/final_report.md`
 
 ### บทบาทในทีม — Final Sprint
 | บทบาท | สมาชิก | หน้าที่ Final Sprint |
