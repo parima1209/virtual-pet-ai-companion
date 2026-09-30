@@ -4,18 +4,27 @@
 รูปแบบอ้างอิงจาก [Keep a Changelog](https://keepachangelog.com/) — เลขเวอร์ชันอิงตาม [Semantic Versioning](https://semver.org/)
 (ขึ้น 1.0.0 แล้วเมื่อโค้ด Final Sprint เสร็จครบทุกข้อใน Definition of Done)
 
-> **กติกาการอัปเดตไฟล์นี้ (ตั้งแต่ Sprint 3):** ทุกครั้งที่ commit โค้ด/ฟีเจอร์จริง ต้องเพิ่มบรรทัดใต้หัวข้อ
-> `[Unreleased]` ในคอมมิตเดียวกันทันที ห้ามเขียนสรุปย้อนหลังทีเดียวตอนจบ Sprint — มี git hook เตือนอัตโนมัติ
-> (`.githooks/pre-commit`, เปิดใช้ด้วย `git config core.hooksPath .githooks`)
+> **กติกาการอัปเดตไฟล์นี้ (ตั้งแต่ Sprint 3):** ทุกครั้งที่ commit โค้ด/ฟีเจอร์/เอกสารที่เพิ่มเนื้อหาจริง
+> ต้องเพิ่มบรรทัดใต้หัวข้อ `[Unreleased]` ในคอมมิตเดียวกันทันที **แยกหัวข้อย่อยตามวันที่จริงเสมอ
+> ห้ามรวมของคนละวันไว้ในหัวข้อวันเดียวกัน** และห้ามเขียนสรุปย้อนหลังทีเดียวตอนจบ Sprint — มี git hook
+> เตือนอัตโนมัติ (`.githooks/pre-commit`, เปิดใช้ด้วย `git config core.hooksPath .githooks`)
 
 ## [Unreleased]
 
-### Fixed
+### 30/9/69
+
+#### Fixed
 - **แก้ race condition ในการบันทึกประวัติการโต้ตอบ (`web/history.py`)** — พบจากการทดสอบยิง
-  `/api/interact` พร้อมกันจริง 30 ครั้งบนเครื่องจริง (1/10/69) ว่าไฟล์ `data/interaction_history.json`
+  `/api/interact` พร้อมกันจริง 30 ครั้งบนเครื่องจริง ว่าไฟล์ `data/interaction_history.json`
   เพี้ยนและประวัติเก่าหายหมดได้ถ้ามี 2 request เขียนไฟล์ชนกัน แก้โดยเพิ่ม file lock ครอบ
   read-modify-write ใน `add_entry()` และเปลี่ยน `save_history()` ให้เขียนไฟล์แบบ atomic
   (รายละเอียดเต็มดู `reports/sprint2_report.md` หัวข้อ 4.2) — `pytest` ยัง 87 passed, `flake8` ผ่าน
+
+#### Added
+- เพิ่มผลทดสอบ concurrency (mock, sandbox) ของปุ่ม Interact ลงหัวข้อ 4.1 ของ
+  `reports/sprint2_report.md` — ปิดรายการค้างสุดท้ายในหัวข้อ 4 ของ Sprint 2
+- เพิ่ม `DEMO_CHECKLIST.md` — checklist เตรียม/ซ้อม Live Demo ครบทุกฟีเจอร์ + ขั้นตอนเตรียมเครื่อง
+  ก่อน demo + แผนสำรองถ้า API ล่มกลางทาง (ลิงก์ไว้ใน README.md โครงสร้างโปรเจคด้วย)
 
 ## [1.0.0] — Final Sprint (ครบพร้อมฟีเจอร์เสริม) — 29/9/69 (กำหนดส่งจริง 16/10/69)
 
