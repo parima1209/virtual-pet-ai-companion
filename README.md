@@ -139,6 +139,7 @@ virtual-pet-ai-companion/
 ├── .env.example                  # ตัวอย่างไฟล์ตั้งค่า GEMINI_API_KEY (คัดลอกเป็น .env แล้วใส่รหัสจริง)
 ├── PLAN.md                      # แผนงานและ Definition of Done ราย Sprint
 ├── CHANGELOG.md                  # บันทึกการเปลี่ยนแปลงราย version
+├── DEMO_CHECKLIST.md             # checklist ซ้อม/เตรียม Live Demo (ก่อนส่งจริง 16/10/69)
 ├── requirements.txt
 └── README.md
 ```
