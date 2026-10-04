@@ -9,11 +9,21 @@ import sys
 from datetime import datetime, timedelta, timezone
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "web"))
 
 import app as web_app  # noqa: E402
 from app import sprite_for  # noqa: E402
 from src.pet import Pet  # noqa: E402
+
+
+@pytest.fixture(autouse=True)
+def _reset_decay_carry():
+    """ล้างเศษ decay (_decay_carry) ก่อน/หลังทุกเทส กันค่าค้างข้ามเทสทำให้ผลไม่แน่นอน"""
+    web_app._decay_carry.update(anchor=None, hunger=0.0, energy=0.0, clean=0.0)
+    yield
+    web_app._decay_carry.update(anchor=None, hunger=0.0, energy=0.0, clean=0.0)
 
 
 def test_sprite_idle_by_default():
@@ -604,3 +614,59 @@ def test_api_chat_empty_message_returns_400(monkeypatch, tmp_path):
     )
 
     assert res.status_code == 400
+
+
+# ---------------------------------------------------------------------------
+# บั๊กที่เจอ 4/10/69: เปิด/รีเฟรชถี่กว่ารอบการลด -> เศษถูกปัดทิ้งทุกครั้ง -> energy ไม่ลดเลย
+# ---------------------------------------------------------------------------
+def _setup_decay_state(monkeypatch, tmp_path, start):
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    monkeypatch.setattr(web_app, "cleanliness", 100)
+    monkeypatch.setattr(web_app, "pet", Pet(name="Buddy", hunger=0, mood=50, energy=100))
+    monkeypatch.setattr(web_app, "last_updated", start)
+
+
+def test_decay_accumulates_when_polled_more_often_than_decay_interval(monkeypatch, tmp_path):
+    start = datetime(2026, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
+    _setup_decay_state(monkeypatch, tmp_path, start)
+
+    # จำลองเปิด/รีเฟรช/กดปุ่มทุก 5 นาที ต่อเนื่อง 60 นาที (ถี่กว่ารอบลด energy 10 นาที)
+    for step in range(1, 13):
+        web_app.apply_neglect_decay(now=start + timedelta(minutes=5 * step))
+
+    # ต้องได้ผลเท่ากับการปล่อยไว้ 60 นาทีรวดเดียว: energy -6, hunger +24, cleanliness -7 (7.5 ปัดลง)
+    assert web_app.pet.energy == 94
+    assert web_app.pet.hunger == 24
+    assert web_app.cleanliness == 93
+
+
+def test_decay_accumulates_even_when_polled_every_minute(monkeypatch, tmp_path):
+    start = datetime(2026, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
+    _setup_decay_state(monkeypatch, tmp_path, start)
+
+    for step in range(1, 61):  # ทุก 1 นาที ครบ 60 นาที
+        web_app.apply_neglect_decay(now=start + timedelta(minutes=step))
+
+    assert web_app.pet.energy == 94
+    assert web_app.pet.hunger == 24
+
+
+def test_decay_carry_is_discarded_when_baseline_time_is_edited(monkeypatch, tmp_path):
+    """แก้ last_updated ในไฟล์ (วิธีที่ใช้ซ้อม demo) ต้องคำนวณจากเวลาที่ย้อนไปล้วนๆ ไม่ปนเศษเก่า"""
+    start = datetime(2026, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
+    _setup_decay_state(monkeypatch, tmp_path, start)
+    web_app.apply_neglect_decay(now=start + timedelta(minutes=7))  # สร้างเศษค้างไว้ก่อน
+
+    now = start + timedelta(hours=5)
+    monkeypatch.setattr(web_app, "pet", Pet(name="Buddy", hunger=0, mood=50, energy=100))
+    monkeypatch.setattr(web_app, "last_updated", now - timedelta(minutes=30))  # เหมือนแก้เวลาในไฟล์
+    web_app.apply_neglect_decay(now=now)
+
+    assert web_app.pet.hunger == 12   # 30 นาที x 0.4 พอดี ไม่มีเศษเก่าบวกเข้ามา
+    assert web_app.pet.energy == 97   # 30 นาที x 0.1 = 3 พอดี
+
+
+def test_split_whole_handles_floating_point_error():
+    assert web_app._split_whole(0.9999999999999999) == (1, 0.0)
+    whole, rest = web_app._split_whole(2.5)
+    assert whole == 2 and rest == 0.5

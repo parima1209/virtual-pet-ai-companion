@@ -195,6 +195,19 @@ def apply_growth(elapsed_minutes: float) -> None:
     growth_points += elapsed_minutes * GROWTH_PER_MINUTE_BASE * mult
 
 
+# เศษของหน่วยที่ยังไม่ครบ 1 หน่วย (เช่น energy ลดทีละ 1 ทุก 10 นาที) ต้องสะสมต่อข้ามคำขอ
+# ไม่งั้นการเปิด/รีเฟรช/กดปุ่มถี่กว่ารอบการลดจะปัดเศษทิ้งทุกครั้งจน energy ไม่ลดเลย (บั๊กที่เจอ 4/10/69)
+# เศษใช้ได้เฉพาะเมื่อ "anchor" ตรงกับ last_updated ปัจจุบัน — ถ้าแก้เวลาในไฟล์/รีสตาร์ต เศษเก่าจะถูกทิ้ง
+_decay_carry = {"anchor": None, "hunger": 0.0, "energy": 0.0, "clean": 0.0}
+
+
+def _split_whole(total: float):
+    """แยกค่าที่สะสมได้เป็น (จำนวนเต็มที่ใช้ได้เลย, เศษที่เก็บไว้ต่อ) — บวก 1e-9 กัน floating-point
+    ปัดผิด เช่น 0.9999999999 ที่จริงควรเป็น 1"""
+    whole = int(total + 1e-9)
+    return whole, max(0.0, total - whole)
+
+
 def apply_neglect_decay(now: datetime = None) -> None:
     """คำนวณเวลาจริงที่ผ่านไปตั้งแต่บันทึกครั้งล่าสุด แล้วปรับ hunger/energy/mood/cleanliness ตามนั้น
     รวมถึงสะสมแต้มการเติบโต (growth_points) ตามเวลาที่ผ่านไปจริง"""
@@ -209,9 +222,13 @@ def apply_neglect_decay(now: datetime = None) -> None:
     elapsed_minutes_real = max(0.0, (now - last_updated).total_seconds() / 60)
     elapsed_minutes = min(elapsed_minutes_real, MAX_DECAY_MINUTES)
 
-    hunger_up = int(elapsed_minutes * DECAY_HUNGER_PER_MIN)
-    energy_down = int(elapsed_minutes * DECAY_ENERGY_PER_MIN)
-    clean_down = int(elapsed_minutes * DECAY_CLEAN_PER_MIN)
+    if _decay_carry["anchor"] == last_updated:
+        carry = _decay_carry
+    else:
+        carry = {"hunger": 0.0, "energy": 0.0, "clean": 0.0}
+    hunger_up, carry_hunger = _split_whole(elapsed_minutes * DECAY_HUNGER_PER_MIN + carry["hunger"])
+    energy_down, carry_energy = _split_whole(elapsed_minutes * DECAY_ENERGY_PER_MIN + carry["energy"])
+    clean_down, carry_clean = _split_whole(elapsed_minutes * DECAY_CLEAN_PER_MIN + carry["clean"])
 
     if hunger_up or energy_down:
         pet.hunger = _clamp01(pet.hunger + hunger_up)
@@ -228,11 +245,10 @@ def apply_neglect_decay(now: datetime = None) -> None:
         birth_time = now
     apply_growth(elapsed_minutes_real)
 
+    last_updated = now
+    _decay_carry.update(anchor=now, hunger=carry_hunger, energy=carry_energy, clean=carry_clean)
     if hunger_up or energy_down or clean_down:
-        last_updated = now
         save_pet(pet, when=now)
-    else:
-        last_updated = now
 
 
 def neglect_warning():
