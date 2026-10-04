@@ -32,11 +32,13 @@ function setButtonsDisabled(disabled) {
 
 const LIFE_STAGE_SCALE = { baby: 0.7, teen: 0.85, adult: 1.0 };
 
-function renderState(state) {
+function renderState(state, { quiet = false } = {}) {
   petNameEl.textContent = state.name;
   sprite.src = `/static/sprites/pet_${state.sprite}.png`;
-  sprite.classList.add("bump");
-  setTimeout(() => sprite.classList.remove("bump"), 150);
+  if (!quiet) {  // การอัปเดตอัตโนมัติ (quiet) ไม่เด้งสไปรต์ กันรบกวนสายตาทุก 30 วิ
+    sprite.classList.add("bump");
+    setTimeout(() => sprite.classList.remove("bump"), 150);
+  }
 
   ["hunger", "mood", "energy"].forEach((key) => {
     const v = Math.max(0, Math.min(100, state[key]));
@@ -121,6 +123,33 @@ async function loadState() {
     showError("เชื่อมต่อเซิร์ฟเวอร์ไม่ได้: " + err.message);
   }
 }
+
+// อัปเดตค่าสถานะอัตโนมัติ (ไม่ต้องกดรีเฟรช): ดึง /api/state ทุก 30 วินาที
+// - ข้ามรอบถ้าแท็บถูกซ่อนอยู่ (document.hidden) หรือกำลังรอผลการกดปุ่ม (ปุ่มถูก disable)
+// - เงียบ: ไม่เด้งสไปรต์ ไม่ทับข้อความ log และไม่แสดง error ถ้าเน็ตสะดุดชั่วคราว
+const AUTO_REFRESH_MS = 30000;
+let pollInFlight = false;
+
+async function pollState() {
+  if (document.hidden || pollInFlight || buttons[0]?.disabled) return;
+  pollInFlight = true;
+  try {
+    const res = await fetch("/api/state");
+    if (!res.ok) return;
+    const state = await res.json();
+    state.message = null;  // ไม่ให้ข้อความจากการโพลทับ log ของการกระทำล่าสุด
+    renderState(state, { quiet: true });
+  } catch (err) {
+    /* เงียบไว้ รอบหน้าลองใหม่ */
+  } finally {
+    pollInFlight = false;
+  }
+}
+
+setInterval(pollState, AUTO_REFRESH_MS);
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) pollState();  // กลับมาที่แท็บ → อัปเดตทันที
+});
 
 async function sendAction(action) {
   setButtonsDisabled(true);

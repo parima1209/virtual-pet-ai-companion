@@ -670,3 +670,44 @@ def test_split_whole_handles_floating_point_error():
     assert web_app._split_whole(0.9999999999999999) == (1, 0.0)
     whole, rest = web_app._split_whole(2.5)
     assert whole == 2 and rest == 0.5
+
+
+# ---------------------------------------------------------------------------
+# 4/10/69 — save_pet แบบ atomic + หน้าเว็บอัปเดตค่าสถานะอัตโนมัติ
+# ---------------------------------------------------------------------------
+def test_save_pet_is_atomic_and_leaves_no_temp_file(monkeypatch, tmp_path):
+    import json
+
+    state_file = tmp_path / "pet_state.json"
+    monkeypatch.setattr(web_app, "STATE_FILE", str(state_file))
+    for hunger in (10, 20, 30):
+        web_app.save_pet(Pet(name="Mochi", hunger=hunger))
+        assert json.loads(state_file.read_text(encoding="utf-8"))["hunger"] == hunger
+    assert [f.name for f in tmp_path.iterdir()] == ["pet_state.json"]
+
+
+def test_save_pet_failure_keeps_old_file_intact(monkeypatch, tmp_path):
+    import json
+
+    state_file = tmp_path / "pet_state.json"
+    monkeypatch.setattr(web_app, "STATE_FILE", str(state_file))
+    web_app.save_pet(Pet(name="Mochi", hunger=11))
+
+    def boom(src, dst):
+        raise OSError("disk error (จำลอง)")
+
+    monkeypatch.setattr(web_app.os, "replace", boom)
+    web_app.save_pet(Pet(name="Mochi", hunger=99))  # ต้องไม่ crash
+
+    assert json.loads(state_file.read_text(encoding="utf-8"))["hunger"] == 11
+    assert [f.name for f in tmp_path.iterdir()] == ["pet_state.json"]
+
+
+def test_frontend_auto_refresh_guard():
+    """ตัวเฝ้าระวังแบบง่าย (ไม่ใช่ behaviour test): ต้องมีการโพลทุก 30 วิ และข้ามเมื่อแท็บถูกซ่อน"""
+    js_path = os.path.join(os.path.dirname(__file__), "..", "web", "static", "js", "main.js")
+    with open(js_path, encoding="utf-8") as f:
+        js = f.read()
+    assert "AUTO_REFRESH_MS = 30000" in js
+    assert "setInterval(pollState, AUTO_REFRESH_MS)" in js
+    assert "document.hidden" in js

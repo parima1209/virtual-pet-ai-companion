@@ -108,11 +108,21 @@ def save_pet(pet: Pet, when: datetime = None) -> None:
     data["cleanliness"] = cleanliness
     data["growth_points"] = growth_points
     data["birth_time"] = (birth_time or now).isoformat(timespec="seconds")
+    # เขียนลงไฟล์ชั่วคราวก่อนแล้วค่อย os.replace (atomic) กันไฟล์พังครึ่งๆ กลางๆ
+    # ถ้า request มาพร้อมกันหรือโปรแกรมดับระหว่างเขียน
+    tmp_path = f"{STATE_FILE}.{os.getpid()}.tmp"
     try:
-        with open(STATE_FILE, "w", encoding="utf-8") as f:
+        with open(tmp_path, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(tmp_path, STATE_FILE)
     except OSError as exc:
         print(f"[warn] บันทึกไฟล์สถานะไม่สำเร็จ: {exc}")
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
 
 
 # ---------------------------------------------------------------------------
