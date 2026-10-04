@@ -49,6 +49,13 @@
   ตอนนี้ทั้ง 4 ฉบับมี 6 หัวข้อลำดับเดียวกัน (เพิ่มข้อ 5 ใน Sprint 1-2, ย้ายประเมินตนเองเป็นข้อ 6, แก้เลขอ้างอิงใน `PLAN.md`),
   รายชื่อสมาชิกทีมใช้รายการย่อยทีละคนเหมือนกันทุกฉบับ, แก้ชื่อหัวข้อสมาชิกใน Sprint 2 ให้ตรงกัน และแก้วันที่หัวข้อ 4.2
   ของ Sprint 2 จาก 1/10/69 เป็น 30/9/69 ให้ตรงกับวันที่ commit และ CHANGELOG
+- **แก้ข้อมูลในรายงาน/PLAN/README ที่ไม่ตรงกันหรือล้าสมัย** — จำนวน unit test ทั้งโปรเจคเป็น 98 เคส (README, PLAN,
+  `final_report.md`, `DEMO_CHECKLIST.md` เดิมเขียน 87, `test_web_app.py` 47 → 58), ตาราง Sprint 2 `test_web_app.py`
+  10 → 11 เคสให้รวมเป็น 31 ตามจริง, คะแนนรวมกลุ่ม Final 9.35 → 9.30 ตามการคำนวณถ่วงน้ำหนัก, Retrospective ของ Final
+  แก้ข้อความ "ยังไม่เคย push" ให้สอดคล้องกับข้อ 1 และ 4 ที่ยืนยัน CI เขียวแล้ว, `sprint3_report.md` ระบุว่า hunger
+  +1 ทุก 5 นาทีเป็นค่า ณ Sprint 3 (ปัจจุบัน 2.5 นาที), ตัดการอ้างถึง "แผงคำแนะนำ AI" ออกจาก DoD ของ Sprint 3 ใน
+  `PLAN.md` (เป็นฟีเจอร์ของ Final Sprint) และแก้รายละเอียดจำนวนเทส 1.0.0 ใน CHANGELOG
+  (`test_gemini_client.py` 10 เคส, `test_web_app.py` เพิ่ม 19 เคส ตรงกับ git จริง)
 
 ### 30/9/69
 
@@ -89,8 +96,8 @@ Final Sprint ที่ทำไว้ก่อนหน้าใน [0.5.0] ด�
   `GEMINI_API_KEY` ไว้ หรือเรียกไม่สำเร็จ (timeout/connection error/bad response) จะตอบด้วยประโยคสำรอง
   ที่เตรียมไว้แทนเสมอ ไม่ crash แอป (รูปแบบ error handling เดียวกับ Dog API/Cat Facts API เดิม) เพิ่ม
   `.env.example` + `python-dotenv` เพื่อโหลด API key จากไฟล์ `.env` (ถูก `.gitignore` ไว้แล้ว ไม่ขึ้น GitHub)
-- unit test ใหม่ 29 เคส (cleanliness/aging/night 12 เคส, rename 3 เคส, chat endpoint 2 เคส,
-  `tests/test_gemini_client.py` 12 เคส mock การเรียก Gemini ทั้งหมด) — รวมทั้งโปรเจคเป็น 87 เคส (จาก 58)
+- unit test ใหม่ 29 เคส (เพิ่มใน `tests/test_web_app.py` 19 เคส: cleanliness/aging/night, rename, chat endpoint ฯลฯ
+  และไฟล์ใหม่ `tests/test_gemini_client.py` 10 เคส mock การเรียก Gemini ทั้งหมด) — รวมทั้งโปรเจคเป็น 87 เคส (จาก 58)
 - **สไปรต์ขยับไหวเบาๆ ตลอดเวลา (idle animation)** — เพิ่ม `<div class="sprite-bob">` ครอบ `#sprite`
   อีกชั้นหนึ่ง (แยกจาก `#sprite-wrap` ที่ใช้ปรับขนาดตามวัย และจาก `.sprite.bump` ที่ใช้ตอนกด feed/play)
   เพื่อเล่น CSS `@keyframes idle-bob` (ลอยขึ้นลง + เอียงเล็กน้อย วนซ้ำ) โดยไม่ชน `transform` กับอีกสองจุดที่

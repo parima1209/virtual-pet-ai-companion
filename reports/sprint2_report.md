@@ -33,7 +33,7 @@
 | กลุ่มไฟล์ทดสอบ | จำนวนเทส | ครอบคลุม |
 |---|---|---|
 | `tests/test_pet.py` | 7 | คลาส `Pet` (Sprint 1 เดิม) |
-| `tests/test_web_app.py` | 10 | logic เลือกสไปรต์ + `/api/interact` แบบ mock API (สำเร็จ/timeout/connection error/bad payload) + `/api/history` |
+| `tests/test_web_app.py` | 11 | logic เลือกสไปรต์ + `/api/interact` แบบ mock API (สำเร็จ/timeout/connection error/bad payload) + `/api/history` |
 | `tests/test_history.py` | 13 | `load_history`, `save_history`, `add_entry`, `search_history`, `filter_history`, `sort_history` |
 
 ### 2.2 Manual / Edge Case Testing (Observation / Expected / Actual)

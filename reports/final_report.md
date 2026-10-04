@@ -27,14 +27,14 @@
 ## 2. ผลการทดสอบระบบ (Quality Assurance & Debugging Report)
 
 ### 2.1 Unit Tests (`pytest`)
-รันคำสั่ง `pytest -v` — ผลลัพธ์: **87 passed in 0.7s** (เพิ่มจาก 46 ใน Sprint 3 เป็น 58 ตอน DoD ของ Final Sprint และเพิ่มอีกเป็น 87 หลังทำฟีเจอร์เสริม lifelike pet เพิ่มเติม)
+รันคำสั่ง `pytest -v` — ผลลัพธ์: **98 passed** (เพิ่มจาก 46 ใน Sprint 3 เป็น 58 ตอน DoD ของ Final Sprint, เป็น 87 หลังทำฟีเจอร์เสริม lifelike pet และเป็น 98 หลังแก้บั๊ก decay และเพิ่มฟีเจอร์เมื่อ 4/10/69 — ดู `CHANGELOG.md`)
 
 | กลุ่มไฟล์ทดสอบ | จำนวนเทส | ครอบคลุม |
 |---|---|---|
 | `tests/test_pet.py` | 7 | คลาส `Pet` |
 | `tests/test_history.py` | 13 | `web/history.py` |
 | `tests/test_advisor.py` | 10 | `web/advisor.py` — AI Advisor แบบ rule-based |
-| `tests/test_web_app.py` | 47 | สไปรต์, `/api/interact`, `/api/history`, neglect decay, `/api/action`,
+| `tests/test_web_app.py` | 58 | สไปรต์, `/api/interact`, `/api/history`, neglect decay, `/api/action`,
   `/api/state`, `save_pet`/`load_pet`, `/api/advice`, `/` index route, ฟีเจอร์เสริม (cleanliness/aging/
   night/rename/chat) |
 | `tests/test_gemini_client.py` | 10 | `web/gemini_client.py` — mock การเรียก Gemini API ทั้งหมด |
@@ -49,16 +49,16 @@
 |---|---|---|---|---|
 | `GET /api/advice` (สถานะปกติ) | สถานะเริ่มต้นจาก `data/pet_state.json` | คำนวณคะแนน + แนะนำ action ตรงกับสูตร | ได้คะแนน 89/100 แนะนำ feed ตรงกับที่คำนวณมือ | PASSED |
 | `GET /api/advice` (หิวมาก) | ตั้ง hunger = 92 แล้วรีสตาร์ตเซิร์ฟเวอร์ | คะแนนลดลง แนะนำ feed | ได้คะแนน 70/100 แนะนำ feed ตรงกับสูตร | PASSED |
-| `pytest -v` เต็มชุด | รันทั้งโปรเจค | ผ่านทั้งหมดไม่มี error | 87 passed | PASSED |
+| `pytest -v` เต็มชุด | รันทั้งโปรเจค | ผ่านทั้งหมดไม่มี error | 98 passed | PASSED |
 | `flake8` เต็มโปรเจค | รันทั้ง `src/`, `web/`, `tests/`, `app.py` | ไม่มี lint error | ไม่มี error (หลังแก้ 1 จุด) | PASSED |
 
 ## 3. สรุปบทเรียนประจำสัปดาห์ (Retrospective: Wow! & Whoops!)
 - **Wow!** (ส่วนที่ทำได้ดี): ออกแบบ AI Advisor แบบ rule-based ล้วน (ไม่พึ่ง API ภายนอก) ทำให้ผลลัพธ์
   deterministic ทดสอบได้ 100% โดยไม่ต้องกังวลเรื่อง API key/ค่าใช้จ่าย/อินเทอร์เน็ตหลุด — ยังคงตอบโจทย์
   "ทำนายอารมณ์สัตว์เลี้ยงที่ฉลาดขึ้น" ตามที่ PLAN.md เสนอไว้ตั้งแต่แรก
-- **Whoops!** (ปัญหาที่พบและแนวทางแก้ไข): ยังไม่เคย push ขึ้น GitHub เลยตั้งแต่เริ่ม Sprint 3 ทำให้ยังไม่เห็น
-  สถานะ GitHub Actions รันจริงสักครั้ง — ต้อง push แล้วเช็คสถานะ CI ให้ผ่านจริงก่อนวัน Live Demo ไม่ใช่แค่
-  เชื่อผลจากการรันคำสั่งเดียวกันในเครื่อง
+- **Whoops!** (ปัญหาที่พบและแนวทางแก้ไข): ช่วงแรกของ Sprint ยังไม่ได้ push ขึ้น GitHub ทำให้ยังไม่เห็นสถานะ
+  GitHub Actions รันจริงสักครั้ง ไม่ควรเชื่อแค่ผลจากการรันคำสั่งเดียวกันในเครื่อง — แก้แล้วโดย push, เปิด Pull
+  Request #1, ยืนยัน CI ขึ้นเขียวจริง และ merge เข้า `main` สำเร็จ (ดูหัวข้อ 4)
 - **ลิงก์ Repository / Pull Request:** https://github.com/parima1209/virtual-pet-ai-companion
 
 ## 4. สิ่งที่ต้องทำต่อก่อนส่งงาน Final Sprint (16/10/69)
@@ -99,11 +99,11 @@
 
 | หัวข้อ | น้ำหนัก | คะแนนกลุ่ม (0-10) | เหตุผล |
 |---|---|---|---|
-| บรรลุวัตถุประสงค์กลุ่ม | 30% | 9.5 | DoD ครบทุกข้อ (CI เขียวจริง, unit test 87 เคส, AI Advisor + Gemini API จริง, README/Pitch ครบ) |
+| บรรลุวัตถุประสงค์กลุ่ม | 30% | 9.5 | DoD ครบทุกข้อ (CI เขียวจริง, unit test 98 เคส, AI Advisor + Gemini API จริง, README/Pitch ครบ) |
 | ความสอดคล้องของเนื้อหาและมาตรฐานของงาน | 30% | 9.5 | ทำเกินสเปกที่ขอ (DoD ขอ AI/Automation แค่ 1 อย่าง แต่ทำทั้ง Advisor แบบ rule-based และ Gemini จริง) |
 | ปริมาณ คุณภาพ และธรรมาภิบาลของงาน | 30% | 9 | เทสครอบคลุมทุก layer (Business Logic/Data Access/API Integration) มี CI คอยเช็คอัตโนมัติทุกครั้ง |
 | ภาพรวมงานกลุ่มทั้งหมด | 10% | 9 | push + เปิด PR + merge เข้า main สำเร็จ พร้อมส่งงานจริง |
-| **รวม (ถ่วงน้ำหนัก)** | **100%** | **9.35 / 10** | |
+| **รวม (ถ่วงน้ำหนัก)** | **100%** | **9.30 / 10** | |
 
 **Individual Self-Assessment (0–10)**
 *(เกณฑ์อ้างอิงอาจารย์ ข้อ 5.2 ระดับบุคคล: การนำเสนอ 30% + ความตั้งใจ/ทุ่มเท 30% + ความคิดสร้างสรรค์ 30% + ภาพรวม 10%)*

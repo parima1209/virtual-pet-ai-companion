@@ -22,7 +22,7 @@
 - [x] **Sprint 3** — Full-Stack App Dev — ส่งงาน 2/10/69 — โค้ดหลักเสร็จแล้ว (neglect decay, ยืนยันด้วย
   manual test จริง + responsive mode ผ่าน Chrome DevTools แล้ว ปกติดี) push ขึ้น GitHub แล้ว
 - [x] **Final Sprint** — DevOps, CI/CD & AI Integration — ส่งงาน 16/10/69 — GitHub Actions CI (ยืนยันขึ้น
-  เขียวจริงบน GitHub แล้ว), unit test ครบ 87 เคส (รวมฟีเจอร์เสริม lifelike pet), AI Advisor, Gemini API
+  เขียวจริงบน GitHub แล้ว), unit test ครบ 98 เคส (รวมฟีเจอร์เสริม lifelike pet), AI Advisor, Gemini API
   จริง, และ `reports/final_report.md` เสร็จหมดแล้ว push + merge เข้า `main` เรียบร้อย
 
 > ทุกอย่างเสร็จสมบูรณ์แล้ว รวมถึงบทบาททีมและการประเมินตนเองของทุก Sprint (ดูรายละเอียดในไฟล์รายงาน
@@ -54,7 +54,7 @@ python app.py
 python web/app.py
 # แล้วเปิดเบราว์เซอร์ที่ http://127.0.0.1:5000
 
-# 4. รัน unit tests (ครอบคลุมทั้ง CLI และเว็บ) — ควรได้ 87 passed
+# 4. รัน unit tests (ครอบคลุมทั้ง CLI และเว็บ) — ควรได้ 98 passed
 pytest
 
 # 5. (ถ้าอยากเช็คแบบเดียวกับ CI) รัน lint ด้วย
@@ -149,7 +149,7 @@ virtual-pet-ai-companion/
 - Framework Style: Object-Oriented Programming (OOP)
 - Web Framework: Flask (เวอร์ชันเว็บ Pixel Art Game)
 - Pixel Art: Pillow (PIL) สำหรับสร้างสไปรต์
-- Testing: pytest (87 เคส) + flake8 (lint)
+- Testing: pytest (98 เคส) + flake8 (lint)
 - CI/CD: GitHub Actions (`.github/workflows/ci.yml`)
 - API: Dog API (dog.ceo) และ Cat Facts API (catfact.ninja) ผ่าน `requests`
 - Data Persistence: ไฟล์ JSON (`data/pet_state.json`, `data/interaction_history.json`)

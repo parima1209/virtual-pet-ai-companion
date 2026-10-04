@@ -158,8 +158,8 @@ Virtual Pet (AI Companion) คือแอปพลิเคชัน Python ท
 - [x] รีเฟรชหน้าเว็บกลางคันแล้วสถานะยังอยู่ครบถูกต้อง (ทดสอบจริง: feed→play→rest แล้วเรียก /api/state ซ้ำ ค่าที่ได้ตรงกับที่บันทึกใน data/pet_state.json ทุกครั้ง)
 - [x] มีข้อความ/สถานะพิเศษเมื่อสัตว์เลี้ยงถูกละเลยนานเกินไป (เพิ่มระบบ neglect decay ตามเวลาจริงที่ผ่านไปใน `web/app.py`, แจ้งเตือนใน UI — ทดสอบจริงด้วยการจำลองปล่อยไว้ 500 นาที: hunger ขึ้นไป 100, energy ลงไป 0, ขึ้นข้อความเตือนถูกต้อง)
 - [x] ทดสอบบนหน้าจอมือถือ (หรือ browser responsive mode) แล้วใช้งานได้ปกติ — ทีมเปิด Chrome DevTools
-      responsive mode (iPhone SE, กว้าง < 420px) เช็คด้วยตาแล้ว ทุกอย่างปกติดี (การ์ด/ปุ่ม/แผงประวัติ/
-      แผงคำแนะนำ AI ไม่ล้นจอ ไม่มี scroll แนวนอน)
+      responsive mode (iPhone SE, กว้าง < 420px) เช็คด้วยตาแล้ว ทุกอย่างปกติดี (การ์ด/ปุ่ม/แผงประวัติ
+      ไม่ล้นจอ ไม่มี scroll แนวนอน)
 - [x] ทดสอบ manual แบบครบวงจร (เปิดเกม → feed/play/rest/interact → ปิด/เปิดใหม่) อย่างน้อย 1 รอบ พร้อมบันทึกผล (รันจริงผ่าน curl ครบทุก endpoint รวม /api/history และกรณี invalid action คืน 400 — ดูผลละเอียดใน `reports/sprint3_report.md`)
 
 > **ปัญหาทางเทคนิคที่เจอและวิธีแก้ไขระหว่าง Sprint นี้:** ดูตารางละเอียดได้ในหัวข้อ 5 ของ
@@ -200,9 +200,9 @@ Virtual Pet (AI Companion) คือแอปพลิเคชัน Python ท
       (`.github/workflows/ci.yml` — รัน flake8 + pytest ทุกครั้งที่ push/เปิด PR เข้า main — ยืนยันแล้วว่า
       ขึ้นสถานะ ✅ เขียวจริงบน GitHub ตอนเปิด Pull Request #1 ก่อน merge เข้า main สำเร็จ)
 - [x] Unit test ครอบคลุมทุกฟังก์ชันหลักของโปรเจค (ทั้ง Business Logic, Data Access, API Integration)
-      — รวม 87 เคส: `test_pet.py` (7, Business Logic คลาส `Pet`), `test_advisor.py`
+      — รวม 98 เคส (ตัวเลข ณ 4/10/69): `test_pet.py` (7, Business Logic คลาส `Pet`), `test_advisor.py`
       (10, Business Logic AI Advisor), `test_history.py` (13, Data Access Layer
-      `interaction_history.json`), `test_web_app.py` (47, Data Access Layer `save_pet`/`load_pet`
+      `interaction_history.json`), `test_web_app.py` (58, Data Access Layer `save_pet`/`load_pet`
       + Data API Integration แบบ mock ต่อ Dog API/Cat Facts API + HTTP endpoint ทั้งหมด รวมฟีเจอร์เสริม
       cleanliness/aging/night/rename/chat), `test_gemini_client.py` (10, mock การเรียก Gemini API ทั้งหมด)
       — รัน `pytest -v` แล้วผ่านครบทุกเคส
