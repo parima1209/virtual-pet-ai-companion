@@ -14,15 +14,15 @@
 - [x] สถานะสัตว์เลี้ยงไม่หายเมื่อรีเฟรชหน้า — `/api/state` โหลดจาก `data/pet_state.json` เสมอ (ยืนยันด้วย
       manual test จริง)
 - [x] **เพิ่มระบบ Neglect Decay** — ถ้าปล่อยสัตว์เลี้ยงไว้นานโดยไม่กดอะไรเลย hunger จะค่อยๆ เพิ่มขึ้น
-      (+1 ทุก 5 นาทีจริง ณ Sprint 3 — ภายหลังปรับเป็น +1 ทุก 2.5 นาทีเมื่อ 29/9/69 ดู `CHANGELOG.md`) และ energy จะค่อยๆ ลดลง (-1 ทุก 10 นาทีจริง) โดยอิงเวลาจริงจาก `last_updated`
+      (+1 ทุก 5 นาทีจริง ณ Sprint 3 — ภายหลังปรับเป็น +1 ทุก 2.5 นาทีเมื่อ 29/9/69 ดู `CHANGELOG.md`) และ energy จะค่อยๆ ลดลง (-1 ทุก 10 นาทีจริง) ถ้าถูกละเลยหนัก (hunger ≥ 90 หรือ energy ≤ 10) mood จะลดลง 5 หน่วยด้วย โดยอิงเวลาจริงจาก `last_updated`
       ที่บันทึกไว้ใน `data/pet_state.json` — จำกัดเพดานไว้ที่ 24 ชม. กันค่าพังถ้าปล่อยไว้นานเป็นวันๆ
 - [x] เพิ่มข้อความ/แบนเนอร์เตือนบนหน้าเว็บเมื่อ hunger ≥ 90 หรือ energy ≤ 10 (`neglected`/`warning`
       ใน response ของ `/api/state`, `/api/action`, `/api/interact`)
 - [x] ป้องกันการกดปุ่มรัวๆ ระหว่างรอ API ตอบกลับ (`setButtonsDisabled` ใน `main.js` — ทำไว้ตั้งแต่ Sprint 2 แล้ว)
 - [x] CSS รองรับจอมือถือด้วย responsive layout (การ์ดกว้าง 100% สูงสุด 420px + media query) — **ทดสอบจริง
       ด้วย Chrome DevTools responsive mode (iPhone SE) แล้ว ทุกอย่างปกติดี**
-- [x] เพิ่ม unit test ใหม่ 15 เคส ครอบคลุม decay logic, `/api/action` ผ่าน HTTP จริง, และ Data Access Layer
-      (`save_pet`/`load_pet` roundtrip)
+- [x] เพิ่ม unit test ใหม่ 15 เคส ครอบคลุม decay logic, `/api/action` ผ่าน HTTP จริง, Data Access Layer
+      (`save_pet`/`load_pet` roundtrip) และข้อความเตือน (`state_payload`)
 
 ## 2. ผลการทดสอบระบบ (Quality Assurance & Debugging Report)
 
@@ -35,7 +35,7 @@
 | `tests/test_history.py` | 13 | `web/history.py` (Sprint 2 เดิม) |
 | `tests/test_web_app.py` | 26 | สไปรต์, `/api/interact` (mock API), `/api/history`, **ใหม่:** neglect decay (4 เคส),
   `/api/action` ผ่าน HTTP จริง (feed/play/rest/invalid — 4 เคส), `/api/state` (2 เคส), `save_pet`/`load_pet`
-  roundtrip + ไฟล์เสีย/ไม่มี (3 เคส) |
+  roundtrip + ไฟล์เสีย/ไม่มี (3 เคส), `state_payload` แจ้งเตือน/ไม่แจ้งเตือน (2 เคส) |
 
 ### 2.2 Manual / Integration Testing แบบครบวงจร (Observation / Expected / Actual)
 รันเซิร์ฟเวอร์จริงด้วย `python web/app.py` แล้วยิง `curl` ตรงไปที่ทุก endpoint (ไม่ใช่แค่ unit test แบบ mock)
@@ -47,7 +47,7 @@
 | Play | `POST /api/action {"action":"play"}` | energy ลด, mood เพิ่ม | energy 40→25, mood คงที่ 100 (ชนเพดานอยู่แล้ว) | PASSED |
 | Rest | `POST /api/action {"action":"rest"}` | energy เพิ่มขึ้น (ไม่เกิน 100) | energy 25→50 | PASSED |
 | คำสั่งไม่รู้จัก | `POST /api/action {"action":"nonsense"}` | ตอบ error, ไม่ crash | HTTP 400 พร้อมข้อความ "ไม่รู้จักคำสั่ง 'nonsense'" | PASSED |
-| ดูประวัติ | `GET /api/history` | คืนประวัติที่มีอยู่จริง | ได้ 13 รายการจริงจาก Dog API/Cat Facts API (ของ Sprint 2) | PASSED |
+| ดูประวัติ | `GET /api/history` | คืนประวัติที่มีอยู่จริง | ได้ 13 รายการจริงจาก Dog API/Cat Facts API (สะสมจากการใช้งานตั้งแต่ Sprint 2 ในไฟล์ของเครื่องที่ทดสอบรอบนี้ จำนวนแต่ละเครื่องไม่เท่ากันเพราะไฟล์ประวัติไม่ขึ้น GitHub) | PASSED |
 | รีเฟรชหน้า (จำลองด้วยการเรียก `/api/state` ซ้ำ) | เรียก `/api/state` หลัง feed/play/rest | ค่าต้องตรงกับที่บันทึกไว้ล่าสุด | hunger=5, energy=50, mood=100 ตรงกับใน `data/pet_state.json` ทุกตัว | PASSED |
 | จำลองปล่อยสัตว์เลี้ยงไว้นาน | แก้ `last_updated` ในไฟล์ให้เป็นเมื่อ 500 นาทีก่อน แล้วรีสตาร์ตเซิร์ฟเวอร์ | hunger/energy เปลี่ยนตามเวลาที่ผ่านไป, ขึ้นเตือนเมื่อวิกฤต | hunger 5→100, energy 50→0, mood ลดจากบทลงโทษ, `neglected: true` พร้อมข้อความเตือนครบทั้ง 2 กรณี (หิวมาก + หมดแรง) | PASSED |
 
@@ -55,7 +55,7 @@
 - **Wow!** (ส่วนที่ทำได้ดี): ออกแบบ decay ให้อิงเวลาจริง (`last_updated` เทียบกับเวลาปัจจุบัน) แทนที่จะเป็น
   ตัวนับรอบ ทำให้ทดสอบง่ายด้วยการ mock เวลา (`monkeypatch` ค่า `now`) ได้ครบทุก edge case โดยไม่ต้องรอเวลาจริง
   ผ่านไปตอนรัน test; การเพิ่มเพดาน 24 ชม. กันไม่ให้ค่าพังหรือคำนวณเพี้ยนถ้ามีคนลืมเปิดโปรเจคไว้หลายวัน
-- **Whoops!** (ปัญหาที่พบและแนวทางแก้ไข): ทดสอบ neglect decay (กรณีปล่อยสัตว์เลี้ยงไว้นาน) ต้องแก้เวลาใน
+- **Whoops!** (ปัญหาที่พบและแนวทางแก้ไข): ทดสอบ neglect decay แบบ manual (กรณีปล่อยสัตว์เลี้ยงไว้นาน — ส่วน unit test ใช้ mock เวลาได้ตามที่เล่าใน Wow!) ต้องแก้เวลาใน
   ไฟล์ `data/pet_state.json` ตรงๆ แล้วรีสตาร์ตเซิร์ฟเวอร์เองทุกครั้ง ยังไม่มีเครื่องมือจำลองเวลาที่สะดวก —
   ดูรายละเอียดในหัวข้อ 5 ด้านล่าง
 - **ลิงก์ Repository / Pull Request:** https://github.com/parima1209/virtual-pet-ai-companion
@@ -90,7 +90,7 @@
 
 | หัวข้อ | น้ำหนัก | คะแนนกลุ่ม (0-10) | เหตุผล |
 |---|---|---|---|
-| บรรลุวัตถุประสงค์กลุ่ม | 30% | 9 | DoD ครบทุกข้อ (state sync, refresh ไม่หาย, neglect decay ทดสอบจริง 500 นาที, responsive mode ผ่าน) |
+| บรรลุวัตถุประสงค์กลุ่ม | 30% | 9 | DoD ครบทุกข้อ (state sync, refresh ไม่หาย, neglect decay จำลองเวลา 500 นาทีโดยแก้ `last_updated` ในไฟล์, responsive mode ผ่าน) |
 | ความสอดคล้องของเนื้อหาและมาตรฐานของงาน | 30% | 9 | เชื่อม Front-End กับ Back-End แบบ end-to-end ได้ตามสเปก จัดการ state ระหว่าง session ถูกต้อง |
 | ปริมาณ คุณภาพ และธรรมาภิบาลของงาน | 30% | 8.5 | ทดสอบ manual ครบวงจรผ่าน curl ทุก endpoint พร้อมบันทึกผลใน reports/sprint3_report.md |
 | ภาพรวมงานกลุ่มทั้งหมด | 10% | 9 | ใช้งานได้ลื่นทั้งจอคอมและมือถือ ไม่มี error ค้าง |
