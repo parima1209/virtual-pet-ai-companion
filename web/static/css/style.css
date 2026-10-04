@@ -126,6 +126,10 @@ body.is-night .stage {
   border: 2px solid var(--navy);
   color: var(--navy);
 }
+.growth-box { margin: 6px auto 0; max-width: 240px; }
+.growth-bar { height: 10px; }
+.bar-fill.growth { background: var(--gold); width: 0%; }
+.growth-text { margin: 3px 0 0; font-size: 10.5px; color: var(--muted); }
 .rename-form {
   margin-top: 8px;
   display: flex;

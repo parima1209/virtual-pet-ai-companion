@@ -194,6 +194,24 @@ def life_stage_for(points: float) -> str:
     return "adult"
 
 
+def growth_progress(points: float) -> dict:
+    """ความคืบหน้าไปสู่วัยถัดไป (ใช้แสดงแถบ + ตัวเลขบนหน้าเว็บ)
+    คืน start/target = แต้มเริ่ม/แต้มเป้าหมายของวัยปัจจุบัน, percent = 0-100,
+    next_label = ชื่อวัยถัดไป (None เมื่อโตเต็มวัยแล้ว)"""
+    stage = life_stage_for(points)
+    if stage == "baby":
+        start, target, next_stage = 0, STAGE_TEEN_POINTS, "teen"
+    elif stage == "teen":
+        start, target, next_stage = STAGE_TEEN_POINTS, STAGE_ADULT_POINTS, "adult"
+    else:
+        return {"start": STAGE_ADULT_POINTS, "target": None,
+                "percent": 100, "next_label": None}
+    percent = (points - start) / (target - start) * 100
+    return {"start": start, "target": target,
+            "percent": round(max(0.0, min(100.0, percent)), 1),
+            "next_label": _STAGE_LABEL[next_stage]}
+
+
 def apply_growth(elapsed_minutes: float) -> None:
     """สะสมแต้มการเติบโตตามเวลาจริงที่ผ่านไป คูณด้วยคุณภาพการดูแล (ยิ่งดูแลดียิ่งโตไว)"""
     global growth_points
@@ -317,6 +335,7 @@ def state_payload(message: str = "") -> dict:
         "life_stage": stage,
         "life_stage_label": _STAGE_LABEL[stage],
         "growth_points": round(growth_points, 1),
+        "growth_progress": growth_progress(growth_points),
     }
 
 

@@ -11,6 +11,8 @@ const neglectBanner = document.getElementById("neglect-banner");
 const dirtyBanner = document.getElementById("dirty-banner");
 const nightIcon = document.getElementById("night-icon");
 const lifeStageBadge = document.getElementById("life-stage-badge");
+const growthBar = document.getElementById("bar-growth");
+const growthText = document.getElementById("growth-text");
 const buttons = document.querySelectorAll(".pixel-btn");
 
 const bars = {
@@ -90,6 +92,16 @@ function renderState(state, { quiet = false } = {}) {
     lifeStageBadge.textContent = state.life_stage_label;
     const scale = LIFE_STAGE_SCALE[state.life_stage] || 1.0;
     spriteWrap.style.transform = `scale(${scale})`;
+  }
+
+  // แถบ + ตัวเลขความคืบหน้าการเติบโต (4/10/69)
+  if (state.growth_progress && typeof state.growth_points === "number") {
+    const g = state.growth_progress;
+    growthBar.style.width = g.percent + "%";
+    const pts = Math.floor(state.growth_points).toLocaleString();
+    growthText.textContent = g.target === null
+      ? `โตเต็มวัยแล้ว 🐓 (แต้ม ${pts})`
+      : `แต้ม ${pts} / ${g.target.toLocaleString()} → ${g.next_label}`;
   }
 }
 

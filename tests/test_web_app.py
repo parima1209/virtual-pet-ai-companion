@@ -711,3 +711,34 @@ def test_frontend_auto_refresh_guard():
     assert "AUTO_REFRESH_MS = 30000" in js
     assert "setInterval(pollState, AUTO_REFRESH_MS)" in js
     assert "document.hidden" in js
+
+
+# ---------------------------------------------------------------------------
+# 4/10/69 — แถบ + ตัวเลขความคืบหน้าการเติบโต (growth_progress)
+# ---------------------------------------------------------------------------
+def test_growth_progress_baby_halfway_to_teen():
+    g = web_app.growth_progress(web_app.STAGE_TEEN_POINTS / 2)
+    assert g["start"] == 0 and g["target"] == web_app.STAGE_TEEN_POINTS
+    assert g["percent"] == 50.0
+    assert g["next_label"] == web_app._STAGE_LABEL["teen"]
+
+
+def test_growth_progress_teen_range_starts_from_teen_threshold():
+    g = web_app.growth_progress(web_app.STAGE_TEEN_POINTS)
+    assert g["start"] == web_app.STAGE_TEEN_POINTS
+    assert g["target"] == web_app.STAGE_ADULT_POINTS
+    assert g["percent"] == 0.0
+    assert g["next_label"] == web_app._STAGE_LABEL["adult"]
+
+
+def test_growth_progress_adult_is_full_without_target():
+    g = web_app.growth_progress(web_app.STAGE_ADULT_POINTS + 999)
+    assert g["target"] is None and g["next_label"] is None
+    assert g["percent"] == 100
+
+
+def test_state_payload_includes_growth_progress(monkeypatch):
+    monkeypatch.setattr(web_app, "growth_points", web_app.STAGE_TEEN_POINTS + 10)
+    payload = web_app.state_payload()
+    assert payload["life_stage"] == "teen"
+    assert payload["growth_progress"]["target"] == web_app.STAGE_ADULT_POINTS
