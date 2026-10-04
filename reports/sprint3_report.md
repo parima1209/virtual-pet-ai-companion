@@ -2,8 +2,11 @@
 
 - **ชื่อโปรเจกต์:** Virtual Pet (AI Companion)
 - **สัปดาห์ที่:** 3 (Sprint 3: Full-Stack App Dev)
-- **สมาชิกในทีม:** Team Leader ปริม, Planner แคร์, Coder ยีนส์, Debugger/QA อาอิง (ดูตาราง
-  "บทบาทในทีม — Sprint 3" ใน `PLAN.md`)
+- **สมาชิกในทีม:**
+  - Team Leader: ปริม
+  - Planner: แคร์
+  - Coder: ยีนส์
+  - Debugger / QA: อาอิง
 
 ## 1. สรุปความก้าวหน้าของงาน (Sprint Progress Summary)
 - [x] ทุกปุ่ม (Feed / Play / Rest / Interact) เรียก REST API ของ Flask แล้วอัปเดตหน้าจอแบบเรียลไทม์อยู่แล้ว

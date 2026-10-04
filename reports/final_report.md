@@ -2,8 +2,11 @@
 
 - **ชื่อโปรเจกต์:** Virtual Pet (AI Companion)
 - **สัปดาห์ที่:** 4 (Final Sprint: DevOps, CI/CD & AI Integration)
-- **สมาชิกในทีม:** Team Leader อาอิง, Planner ยีนส์, Coder ปริม, Debugger/QA แคร์ (ดูตาราง
-  "บทบาทในทีม — Final Sprint" ใน `PLAN.md`)
+- **สมาชิกในทีม:**
+  - Team Leader: อาอิง
+  - Planner: ยีนส์
+  - Coder: ปริม
+  - Debugger / QA: แคร์
 
 ## 1. สรุปความก้าวหน้าของงาน (Sprint Progress Summary)
 - [x] ตั้งค่า GitHub Actions (`.github/workflows/ci.yml`) ให้รัน `flake8` + `pytest` อัตโนมัติทุกครั้งที่
