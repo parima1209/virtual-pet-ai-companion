@@ -27,6 +27,12 @@
 - [x] ทดสอบเรียก API จริงบนเครื่องที่มีอินเทอร์เน็ต (นอก sandbox พัฒนา) — **ทำแล้ว ผ่านทุกกรณี**
       ได้รูปสุนัขจริงจาก Dog API และ cat fact จริงจาก Cat Facts API แสดงผลถูกต้อง
 
+> **ความต่อเนื่องจาก Sprint 1 (เพิ่มเมื่อ 4/10/69):** *ใช้ต่อ* — คลาส `Pet` (`src/pet.py`): `web/app.py` เรียก `from src.pet import Pet` โดยตรง
+> และไฟล์ `src/pet.py` ไม่เคยถูกแก้หลัง commit ของ Sprint 1 (ตาม `git log`) ส่วนฟีเจอร์ที่เพิ่มภายหลังทำที่ชั้น `web/app.py` ไม่ได้แก้คลาส `Pet`;
+> ส่วน CLI (`src/cli.py`) เว็บไม่ได้เรียกใช้ แต่ยังเก็บไว้ไม่ได้ลบ (ดู `PLAN.md`) *สร้างใหม่ใน Sprint 2* — Flask REST API, หน้าเว็บ, `web/history.py`,
+> การเรียก Dog API/Cat Facts API, การบันทึกสถานะลงไฟล์ JSON และ error handling ฝั่งเว็บ (error handling ของ Sprint 1 คือดักคำสั่งผิด/Ctrl+C ใน CLI
+> จึงไม่ได้ใช้ต่อกับเว็บ)
+
 ## 2. ผลการทดสอบระบบ (Quality Assurance & Debugging Report)
 
 ### 2.1 Unit Tests (`pytest`)
@@ -58,6 +64,8 @@
   dog.ceo/catfact.ninja โดยตรง ทำให้ทดสอบ "เรียก API จริงสำเร็จ" แบบ end-to-end ไม่ได้ในเครื่องพัฒนา —
   แก้ปัญหาด้วยการเขียน unit test แบบ mock (`unittest.mock`) แทน ซึ่งครอบคลุม logic การจัดการ error ได้ครบ
   จากนั้นทีมได้ทดสอบยิง API จริงอีกครั้งบนเครื่องที่มีอินเทอร์เน็ตปกติแล้ว ผลผ่านทุกกรณี ปิด Sprint นี้ได้เต็มรูปแบบ
+  (หมายเหตุเพิ่มเมื่อ 4/10/69: "ผ่านทุกกรณี" ในข้อนี้หมายถึงการทดสอบเรียก API จริงเท่านั้น — ส่วนบั๊ก race condition ของไฟล์ประวัติ
+  พบทีหลังเมื่อ 30/9/69 หลังกำหนดส่ง 25/9/69 และแก้แล้ว ดูหัวข้อ 4.1–4.2)
 - **ลิงก์ Repository / Pull Request:** https://github.com/parima1209/virtual-pet-ai-companion
 
 ## 4. สิ่งที่ต้องทำต่อก่อนส่งงาน Sprint 2 (25/9/69)
