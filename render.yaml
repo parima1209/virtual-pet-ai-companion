@@ -1,0 +1,16 @@
+# ตั้งค่า deploy บน Render (Blueprint) — อยู่ใน branch deploy-test เท่านั้น ยังไม่ merge เข้า main
+# ข้อจำกัดของแบบนี้อ่านที่ DEPLOY.md (สัตว์เลี้ยงตัวเดียวร่วมกันทุกคน, ข้อมูลอาจรีเซ็ตเมื่อรีสตาร์ต)
+services:
+  - type: web
+    name: virtual-pet-ai-companion
+    runtime: python
+    plan: free  # เช็กแพ็กเกจ/ข้อจำกัดปัจจุบันของ Render อีกครั้งก่อนใช้งานจริง
+    buildCommand: pip install -r requirements.txt
+    # worker เดียว + thread เดียว: request เข้าทีละอัน ไม่ชนกันที่ตัวแปรกลางของสัตว์เลี้ยง
+    # --chdir web: เพราะ app.py import history/advisor/gemini_client จากโฟลเดอร์ web/
+    startCommand: gunicorn --chdir web --workers 1 --threads 1 --bind 0.0.0.0:$PORT app:app
+    envVars:
+      - key: TZ
+        value: Asia/Bangkok  # โหมดกลางคืน 20:00-06:00 อิงเวลาท้องถิ่นของเครื่อง ตั้งเป็นเวลาไทย
+      - key: GEMINI_API_KEY
+        sync: false  # ใส่ค่าเองในหน้า Dashboard ของ Render ห้ามเขียนลงไฟล์ใน repo
