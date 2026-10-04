@@ -45,8 +45,9 @@ Virtual Pet (AI Companion) คือแอปพลิเคชัน Python ท
 - [x] มี unit test เบื้องต้นสำหรับคลาส Pet (`tests/test_pet.py`)
 
 ### Prompt ที่ใช้ในการพัฒนา (AI Prompt Log)
-- **Prompt 1:** "as a student in a group of 3 persons: บอส as planner, โชกุน as coder and โฟน as debugger with topic: Typing Test CLI, how to progress with week1/sprint 1"
-- **Prompt 2:** "reframe this into github and full function sourcecode for sprint 1"
+- **Prompt 1:** "reframe this into github and full function sourcecode for sprint 1"
+<!-- TODO (ทีม): เติม prompt จริงที่ใช้กับโปรเจกต์ Virtual Pet นี้ (เช่น ตอน pivot เป็นเว็บ, Sprint 2-3, Final) -
+     ลบ prompt เดิมข้อ 1 ออกเมื่อ 4/10/69 เพราะเป็นข้อความของโปรเจกต์อื่น (ทีม 3 คน หัวข้อ Typing Test CLI) -->
 
 ### สถาปัตยกรรม (Layer Separation)
 | Layer | ไฟล์ | สถานะ |
@@ -200,9 +201,9 @@ Virtual Pet (AI Companion) คือแอปพลิเคชัน Python ท
       (`.github/workflows/ci.yml` — รัน flake8 + pytest ทุกครั้งที่ push/เปิด PR เข้า main — ยืนยันแล้วว่า
       ขึ้นสถานะ ✅ เขียวจริงบน GitHub ตอนเปิด Pull Request #1 ก่อน merge เข้า main สำเร็จ)
 - [x] Unit test ครอบคลุมทุกฟังก์ชันหลักของโปรเจค (ทั้ง Business Logic, Data Access, API Integration)
-      — รวม 98 เคส (ตัวเลข ณ 4/10/69): `test_pet.py` (7, Business Logic คลาส `Pet`), `test_advisor.py`
+      — รวม 104 เคส (ตัวเลข ณ 4/10/69): `test_pet.py` (7, Business Logic คลาส `Pet`), `test_advisor.py`
       (10, Business Logic AI Advisor), `test_history.py` (13, Data Access Layer
-      `interaction_history.json`), `test_web_app.py` (58, Data Access Layer `save_pet`/`load_pet`
+      `interaction_history.json`), `test_web_app.py` (64, Data Access Layer `save_pet`/`load_pet`
       + Data API Integration แบบ mock ต่อ Dog API/Cat Facts API + HTTP endpoint ทั้งหมด รวมฟีเจอร์เสริม
       cleanliness/aging/night/rename/chat), `test_gemini_client.py` (10, mock การเรียก Gemini API ทั้งหมด)
       — รัน `pytest -v` แล้วผ่านครบทุกเคส

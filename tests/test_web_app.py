@@ -18,6 +18,22 @@ from app import sprite_for  # noqa: E402
 from src.pet import Pet  # noqa: E402
 
 
+# ที่อยู่ไฟล์ข้อมูลจริงของโปรเจกต์ (จดไว้ตั้งแต่ import ก่อนที่เทสใดจะเปลี่ยนค่า) ใช้เช็คว่าเทสไม่แตะไฟล์จริง
+REAL_STATE_FILE = web_app.STATE_FILE
+REAL_HISTORY_FILE = web_app.history.HISTORY_FILE
+
+
+@pytest.fixture(autouse=True)
+def _isolate_data_files(monkeypatch, tmp_path):
+    """ย้าย data/pet_state.json และ data/interaction_history.json ไปโฟลเดอร์ชั่วคราวในทุกเทส
+    เดิมเทสบางตัวไม่ได้ redirect ไฟล์ ทำให้ `pytest` เขียนทับสถานะสัตว์เลี้ยงจริงของผู้รัน (แก้เมื่อ 4/10/69)
+    เทสที่ monkeypatch STATE_FILE/HISTORY_FILE เองเพิ่มก็ยังใช้ได้ตามเดิม (ชี้ไปที่ tmp_path เดียวกัน)"""
+    monkeypatch.setattr(web_app, "DATA_DIR", str(tmp_path))
+    monkeypatch.setattr(web_app, "STATE_FILE", str(tmp_path / "pet_state.json"))
+    monkeypatch.setattr(web_app.history, "DATA_DIR", str(tmp_path))
+    monkeypatch.setattr(web_app.history, "HISTORY_FILE", str(tmp_path / "interaction_history.json"))
+
+
 @pytest.fixture(autouse=True)
 def _reset_decay_carry():
     """ล้างเศษ decay (_decay_carry) ก่อน/หลังทุกเทส กันค่าค้างข้ามเทสทำให้ผลไม่แน่นอน"""
@@ -359,6 +375,125 @@ def test_load_pet_corrupt_file_returns_default_without_crash(monkeypatch, tmp_pa
 
     assert loaded_pet.name == "Buddy"
     assert loaded_last_updated is None
+
+
+def _restore_state_globals_after_test(monkeypatch):
+    """load_pet() แก้ global cleanliness/growth_points/birth_time -> ให้ monkeypatch คืนค่าเดิมหลังจบเทส"""
+    monkeypatch.setattr(web_app, "cleanliness", web_app.cleanliness)
+    monkeypatch.setattr(web_app, "growth_points", web_app.growth_points)
+    monkeypatch.setattr(web_app, "birth_time", web_app.birth_time)
+
+
+def test_load_pet_json_that_is_not_an_object_returns_default(monkeypatch, tmp_path):
+    # JSON ถูกไวยากรณ์แต่โครงสร้างผิด (list) เคย crash ตอนเริ่มโปรแกรมด้วย AttributeError
+    _restore_state_globals_after_test(monkeypatch)
+    state_file = tmp_path / "pet_state.json"
+    state_file.write_text("[]", encoding="utf-8")
+    monkeypatch.setattr(web_app, "STATE_FILE", str(state_file))
+
+    loaded_pet, loaded_last_updated = web_app.load_pet()
+
+    assert loaded_pet.name == "Buddy"
+    assert (loaded_pet.hunger, loaded_pet.mood, loaded_pet.energy) == (50, 50, 100)
+    assert loaded_last_updated is None
+    assert web_app.cleanliness == 100 and web_app.growth_points == 0.0
+
+
+def test_load_pet_non_utf8_file_returns_default_without_crash(monkeypatch, tmp_path):
+    _restore_state_globals_after_test(monkeypatch)
+    state_file = tmp_path / "pet_state.json"
+    state_file.write_bytes(b"\xff\xfe\x00 not utf-8")
+    monkeypatch.setattr(web_app, "STATE_FILE", str(state_file))
+
+    loaded_pet, loaded_last_updated = web_app.load_pet()
+
+    assert loaded_pet.name == "Buddy"
+    assert loaded_last_updated is None
+
+
+def test_load_pet_wrong_field_types_fall_back_per_field(monkeypatch, tmp_path):
+    # ช่องที่ผิดชนิด (ข้อความ/null/list/bool) ใช้ค่าเริ่มต้นเฉพาะช่องนั้น ไม่ crash ตอนเริ่มโปรแกรม
+    # และ /api/state ต้องตอบ 200 ได้ (เดิม hunger เป็นข้อความทำให้ตอบ 500)
+    _restore_state_globals_after_test(monkeypatch)
+    state_file = tmp_path / "pet_state.json"
+    state_file.write_text(
+        '{"name": null, "hunger": "abc", "mood": [1], "energy": true,'
+        ' "cleanliness": {}, "growth_points": "x", "last_updated": 12345}',
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(web_app, "STATE_FILE", str(state_file))
+
+    loaded_pet, loaded_last_updated = web_app.load_pet()
+
+    assert loaded_pet.name == "Buddy"
+    assert (loaded_pet.hunger, loaded_pet.mood, loaded_pet.energy) == (50, 50, 100)
+    assert web_app.cleanliness == 100
+    assert web_app.growth_points == 0.0
+    assert loaded_last_updated is None
+
+    monkeypatch.setattr(web_app, "pet", loaded_pet)
+    monkeypatch.setattr(web_app, "last_updated", None)
+    res = web_app.app.test_client().get("/api/state")
+    assert res.status_code == 200
+    assert res.get_json()["hunger"] == 50
+
+
+def test_load_pet_clamps_out_of_range_numbers_and_keeps_valid_fields(monkeypatch, tmp_path):
+    _restore_state_globals_after_test(monkeypatch)
+    state_file = tmp_path / "pet_state.json"
+    state_file.write_text(
+        '{"name": "  Mochi  ", "hunger": 500, "mood": -50, "energy": "70.9",'
+        ' "cleanliness": 1000, "growth_points": -5}',
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(web_app, "STATE_FILE", str(state_file))
+
+    loaded_pet, _ = web_app.load_pet()
+
+    assert loaded_pet.name == "Mochi"
+    assert loaded_pet.hunger == 100
+    assert loaded_pet.mood == 0
+    assert loaded_pet.energy == 70
+    assert web_app.cleanliness == 100
+    assert web_app.growth_points == 0.0
+
+
+def test_load_pet_truncates_overlong_name_and_rejects_nan(monkeypatch, tmp_path):
+    _restore_state_globals_after_test(monkeypatch)
+    state_file = tmp_path / "pet_state.json"
+    state_file.write_text(
+        '{"name": "' + "x" * 50 + '", "hunger": NaN, "growth_points": Infinity}', encoding="utf-8"
+    )
+    monkeypatch.setattr(web_app, "STATE_FILE", str(state_file))
+
+    loaded_pet, _ = web_app.load_pet()
+
+    assert len(loaded_pet.name) == web_app.MAX_NAME_LENGTH
+    assert loaded_pet.hunger == 50
+    assert web_app.growth_points == 0.0
+
+
+def test_pytest_never_touches_real_data_files(monkeypatch):
+    # กันบั๊ก "รัน pytest แล้วสถานะสัตว์เลี้ยงจริงถูกเขียนทับ": ไฟล์ที่เทสใช้ต้องไม่ใช่ไฟล์จริงของโปรเจกต์
+    # และกดปุ่มผ่าน HTTP แล้วไฟล์จริงต้องไม่ถูกสร้าง/แก้ไข
+    assert os.path.abspath(web_app.STATE_FILE) != os.path.abspath(REAL_STATE_FILE)
+    assert os.path.abspath(web_app.history.HISTORY_FILE) != os.path.abspath(REAL_HISTORY_FILE)
+
+    def snapshot(path):
+        return open(path, "rb").read() if os.path.exists(path) else None
+
+    monkeypatch.setattr(web_app, "pet", Pet(name="Buddy"))
+    monkeypatch.setattr(web_app, "last_updated", None)
+    before = (snapshot(REAL_STATE_FILE), snapshot(REAL_HISTORY_FILE))
+    client = web_app.app.test_client()
+    assert client.post("/api/action", json={"action": "feed"}).status_code == 200
+    assert client.post("/api/rename", json={"name": "Tester"}).status_code == 200
+    monkeypatch.setattr(web_app.random, "choice", lambda seq: False)
+    with patch.object(web_app.requests, "get", return_value=_fake_response({"fact": "x"})):
+        assert client.get("/api/interact").status_code == 200
+    after = (snapshot(REAL_STATE_FILE), snapshot(REAL_HISTORY_FILE))
+
+    assert before == after
 
 
 def test_api_advice_endpoint_returns_recommendation(monkeypatch, tmp_path):

@@ -16,6 +16,7 @@ Flask web front-end (Pixel Art) สำหรับ Virtual Pet (AI Companion)
 """
 
 import json
+import math
 import os
 import random
 import sys
@@ -72,25 +73,58 @@ def _parse_iso(value):
         return None
 
 
+def _stat_from_file(value, default: int) -> int:
+    """แปลงค่าสถานะจากไฟล์เป็นจำนวนเต็ม 0-100 ถ้าเป็นชนิดแปลกๆ (ข้อความที่ไม่ใช่ตัวเลข/null/list/bool)
+    ให้ใช้ค่าเริ่มต้นของช่องนั้นแทน และบีบค่าที่เกินช่วงให้อยู่ใน 0-100 เสมอ"""
+    if isinstance(value, bool):
+        return default
+    try:
+        return _clamp01(int(float(value)))
+    except (ValueError, TypeError, OverflowError):
+        return default
+
+
+def _name_from_file(value) -> str:
+    """ชื่อต้องเป็นข้อความที่ไม่ว่าง (ตัดช่องว่างหัวท้าย และไม่ยาวเกิน MAX_NAME_LENGTH) ไม่งั้นใช้ "Buddy" """
+    if isinstance(value, str) and value.strip():
+        return value.strip()[:MAX_NAME_LENGTH]
+    return "Buddy"
+
+
+def _growth_from_file(value) -> float:
+    """แต้มการเติบโตต้องเป็นตัวเลขจำกัดค่าและไม่ติดลบ ไม่งั้นเริ่มที่ 0.0"""
+    if isinstance(value, bool):
+        return 0.0
+    try:
+        points = float(value)
+    except (ValueError, TypeError):
+        return 0.0
+    return points if math.isfinite(points) and points >= 0 else 0.0
+
+
 def load_pet():
     """โหลดสถานะ Pet + เวลาที่บันทึกล่าสุด (last_updated) จากไฟล์ JSON ถ้ามี มิฉะนั้นสร้างตัวใหม่
+    ไฟล์ที่พัง (ไม่ใช่ JSON, ไม่ใช่ JSON object, เข้ารหัสผิด) -> สร้างตัวใหม่ ส่วนไฟล์ที่เป็น JSON ถูกต้อง
+    แต่บางช่องผิดชนิด/เกินช่วง -> ใช้ค่าเริ่มต้นเฉพาะช่องนั้นและบีบค่าให้อยู่ใน 0-100 (ไม่ crash)
     ผลข้างเคียง (side effect): ตั้งค่า global cleanliness / growth_points / birth_time ตามไฟล์ด้วย"""
     global cleanliness, growth_points, birth_time
     if os.path.exists(STATE_FILE):
         try:
             with open(STATE_FILE, "r", encoding="utf-8") as f:
                 data = json.load(f)
+            if not isinstance(data, dict):
+                raise ValueError("โครงสร้างไฟล์ไม่ใช่ JSON object")
             loaded_pet = Pet(
-                name=data.get("name", "Buddy"),
-                hunger=data.get("hunger", 50),
-                mood=data.get("mood", 50),
-                energy=data.get("energy", 100),
+                name=_name_from_file(data.get("name")),
+                hunger=_stat_from_file(data.get("hunger"), 50),
+                mood=_stat_from_file(data.get("mood"), 50),
+                energy=_stat_from_file(data.get("energy"), 100),
             )
-            cleanliness = _clamp01(data.get("cleanliness", 100))
-            growth_points = float(data.get("growth_points", 0.0))
+            cleanliness = _stat_from_file(data.get("cleanliness"), 100)
+            growth_points = _growth_from_file(data.get("growth_points"))
             birth_time = _parse_iso(data.get("birth_time")) or _parse_iso(data.get("last_updated"))
             return loaded_pet, _parse_iso(data.get("last_updated"))
-        except (json.JSONDecodeError, OSError) as exc:
+        except (ValueError, OSError) as exc:  # JSONDecodeError / UnicodeDecodeError เป็นลูกของ ValueError
             print(f"[warn] อ่านไฟล์สถานะไม่สำเร็จ ({exc}) จะสร้างสัตว์เลี้ยงใหม่")
     cleanliness = 100
     growth_points = 0.0

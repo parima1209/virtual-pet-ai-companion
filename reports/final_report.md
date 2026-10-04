@@ -18,6 +18,13 @@
 - [x] (เพิ่มเติมนอกเหนือ DoD) เชื่อมต่อ **Gemini API ภายนอกจริง** (`web/gemini_client.py`, endpoint
       `/api/chat`) ให้สัตว์เลี้ยงคุยตอบกลับผู้ใช้ได้ตามอารมณ์ปัจจุบัน มี fallback อัตโนมัติเมื่อไม่มี
       API key หรือเรียกไม่สำเร็จ ไม่ทำให้แอป crash
+- [x] (เพิ่มเติมนอกเหนือ DoD) ฟีเจอร์เสริม "สัตว์เลี้ยงมีชีวิต" (lifelike pet): ตั้งชื่อ/เปลี่ยนชื่อได้ ✏️
+      (`/api/rename`), โตตามเวลาจริง baby → teen → adult พร้อมป้ายวัยและขนาดสไปรต์ที่เปลี่ยนตามวัย
+      (ยิ่งดูแลดียิ่งโตไว), ความสะอาด 🧼 + ปุ่ม Bathe 🛁 (เล่นแล้วสกปรกขึ้น, สกปรกเกินไปขึ้นฝุ่นและอารมณ์ลด),
+      กลางวัน/กลางคืนตามเวลาเครื่อง (พื้นหลังมืด + 🌙, Play ตอนกลางคืนได้ mood ครึ่งเดียว) และแอนิเมชัน idle ของสไปรต์
+- [x] (ปรับปรุง 4/10/69) แก้บั๊ก energy/hunger/ความสะอาดไม่ลดเมื่อมี request ถี่, `save_pet` แบบ atomic,
+      หน้าเว็บอัปเดตค่าเองทุก 30 วินาที, แถบ + ตัวเลขความคืบหน้าการเติบโต, ไฟล์สถานะที่รูปผิดไม่ทำให้แอปล้ม,
+      และแยกไฟล์ข้อมูลของเทสออกจากข้อมูลจริง (รายละเอียดดู `CHANGELOG.md` หัวข้อ 4/10/69)
 - [x] จัดทำ README ฉบับสมบูรณ์ ครอบคลุมทั้งเวอร์ชัน CLI และเว็บ พร้อมฟีเจอร์ใหม่ทั้งหมด
 - [x] เตรียม Project Pitch (เอกสาร + slide) สำหรับนำเสนอเรียบร้อยแล้ว (ทำไปก่อนหน้านี้)
 - [x] ยืนยันสถานะ GitHub Actions ขึ้นเขียวจริงบน GitHub แล้ว (หลัง push + เปิด Pull Request — ดูรายละเอียด
@@ -27,16 +34,14 @@
 ## 2. ผลการทดสอบระบบ (Quality Assurance & Debugging Report)
 
 ### 2.1 Unit Tests (`pytest`)
-รันคำสั่ง `pytest -v` — ผลลัพธ์: **98 passed** (เพิ่มจาก 46 ใน Sprint 3 เป็น 58 ตอน DoD ของ Final Sprint, เป็น 87 หลังทำฟีเจอร์เสริม lifelike pet และเป็น 98 หลังแก้บั๊ก decay และเพิ่มฟีเจอร์เมื่อ 4/10/69 — ดู `CHANGELOG.md`)
+รันคำสั่ง `pytest -v` — ผลลัพธ์: **104 passed** (เพิ่มจาก 46 ใน Sprint 3 เป็น 58 ตอน DoD ของ Final Sprint, เป็น 87 หลังทำฟีเจอร์เสริม lifelike pet, เป็น 98 หลังแก้บั๊ก decay และเพิ่มฟีเจอร์เมื่อ 4/10/69 และเป็น 104 หลังแก้การโหลดไฟล์สถานะที่รูปผิดและแยกไฟล์ข้อมูลของเทสออกจากข้อมูลจริง (4/10/69) — ดู `CHANGELOG.md`)
 
 | กลุ่มไฟล์ทดสอบ | จำนวนเทส | ครอบคลุม |
 |---|---|---|
 | `tests/test_pet.py` | 7 | คลาส `Pet` |
 | `tests/test_history.py` | 13 | `web/history.py` |
 | `tests/test_advisor.py` | 10 | `web/advisor.py` — AI Advisor แบบ rule-based |
-| `tests/test_web_app.py` | 58 | สไปรต์, `/api/interact`, `/api/history`, neglect decay, `/api/action`,
-  `/api/state`, `save_pet`/`load_pet`, `/api/advice`, `/` index route, ฟีเจอร์เสริม (cleanliness/aging/
-  night/rename/chat) |
+| `tests/test_web_app.py` | 64 | สไปรต์, `/api/interact`, `/api/history`, neglect decay, `/api/action`, `/api/state`, `save_pet`/`load_pet`, `/api/advice`, `/` index route, ฟีเจอร์เสริม (cleanliness/aging/ night/rename/chat) |
 | `tests/test_gemini_client.py` | 10 | `web/gemini_client.py` — mock การเรียก Gemini API ทั้งหมด |
 
 ### 2.2 Lint (`flake8`)
@@ -49,8 +54,20 @@
 |---|---|---|---|---|
 | `GET /api/advice` (สถานะปกติ) | สถานะเริ่มต้นจาก `data/pet_state.json` | คำนวณคะแนน + แนะนำ action ตรงกับสูตร | ได้คะแนน 89/100 แนะนำ feed ตรงกับที่คำนวณมือ | PASSED |
 | `GET /api/advice` (หิวมาก) | ตั้ง hunger = 92 แล้วรีสตาร์ตเซิร์ฟเวอร์ | คะแนนลดลง แนะนำ feed | ได้คะแนน 70/100 แนะนำ feed ตรงกับสูตร | PASSED |
-| `pytest -v` เต็มชุด | รันทั้งโปรเจค | ผ่านทั้งหมดไม่มี error | 98 passed | PASSED |
+| ตั้งชื่อ (`POST /api/rename`) | `{"name":"Mochi"}`, ชื่อว่าง, ชื่อ 21 ตัวอักษร | เปลี่ยนชื่อและบันทึกลงไฟล์; ชื่อว่าง/ยาวเกิน 20 ตัวต้องตอบ 400 | ได้ 200 ชื่อ "Mochi" และชื่อใน `pet_state.json` ตรงกัน; ชื่อว่าง → 400; 21 ตัวอักษร → 400 | PASSED |
+| อาบน้ำ (`bathe`) | cleanliness 20, mood 50 | cleanliness +40, mood +5 | cleanliness 60, mood 55 | PASSED |
+| เล่นแล้วตัวสกปรกขึ้น (`play` ตอนกลางวัน) | cleanliness 100, mood 40 | cleanliness −10, mood +15 | cleanliness 90, mood 55 | PASSED |
+| `play` ตอนกลางคืน (จำลอง) | mood 40 | mood เพิ่มแค่ครึ่งเดียว | mood 47 (+7 จากปกติ +15), `is_night: true` | PASSED |
+| แจ้งเตือนสกปรก | cleanliness 25 (ต่ำกว่า 30) | `dirty: true` + ข้อความเตือน | `dirty: true` พร้อมข้อความ "ตัวสกปรกมากแล้ว รีบพาไปอาบน้ำหน่อยนะ" | PASSED |
+| ความคืบหน้าการเติบโต (`growth_progress`) | growth_points 0 / 1,440 / 2,880 / 5,040 / 7,200 | baby 0% / baby 50% / teen 0% / teen 50% / adult 100% (ไม่มีเป้าหมายถัดไป) | ตรงทุกค่า | PASSED |
+| คุยกับสัตว์เลี้ยงโดยไม่มี API key (`POST /api/chat`) | `{"message":"สวัสดี"}`, ข้อความว่าง, ข้อความ 301 ตัวอักษร | ตอบด้วยประโยคสำรอง; ว่าง/ยาวเกิน 300 ตัวต้องตอบ 400 | ได้ 200 `source: fallback`; ว่าง → 400; 301 ตัวอักษร → 400 | PASSED |
+| `pytest -v` เต็มชุด | รันทั้งโปรเจค | ผ่านทั้งหมดไม่มี error | 104 passed | PASSED |
 | `flake8` เต็มโปรเจค | รันทั้ง `src/`, `web/`, `tests/`, `app.py` | ไม่มี lint error | ไม่มี error (หลังแก้ 1 จุด) | PASSED |
+
+> **หมายเหตุวิธีทดสอบ:** 7 แถวของฟีเจอร์เสริมข้างบนทดสอบเมื่อ 4/10/69 ด้วย Flask test client บนสำเนาของโปรเจกต์
+> (ไม่แตะไฟล์ข้อมูลจริง) โดยจำลอง "กลางคืน" ด้วยการแทนที่ฟังก์ชัน `is_night_time` — **ยังไม่ได้บันทึกผลทดสอบในเบราว์เซอร์**
+> สำหรับแถบความคืบหน้าการเติบโต การอัปเดตทุก 30 วินาที และแอนิเมชัน idle (ควรลองตอนซ้อม Live Demo) ส่วนการเรียก
+> Gemini API จริง ทีมทดสอบสำเร็จบนเครื่องจริงแล้วตามที่บันทึกใน `CHANGELOG.md` เวอร์ชัน 1.0.0
 
 ## 3. สรุปบทเรียนประจำสัปดาห์ (Retrospective: Wow! & Whoops!)
 - **Wow!** (ส่วนที่ทำได้ดี): ออกแบบ AI Advisor แบบ rule-based ล้วน (ไม่พึ่ง API ภายนอก) ทำให้ผลลัพธ์
@@ -69,7 +86,7 @@
       `PLAN.md` ครบแล้ว
 - [x] กรอกตาราง Group/Individual Self-Assessment ของ Sprint 3 (ดูที่ `reports/sprint3_report.md`) และ
       Final Sprint (ดูหัวข้อ 6 ด้านล่าง) ครบแล้ว
-- [ ] ซ้อม Live Demo ให้ครบทุกฟีเจอร์ (feed/play/rest/interact, ประวัติ, AI Advisor, neglect decay)
+- [ ] ซ้อม Live Demo ให้ครบทุกฟีเจอร์ (feed/play/rest/interact, ประวัติ, AI Advisor, neglect decay, ฟีเจอร์เสริม: เปลี่ยนชื่อ/โต/อาบน้ำ/กลางคืน/คุยกับสัตว์เลี้ยง) — ใช้ `DEMO_CHECKLIST.md`
 
 ## 5. ปัญหาทางเทคนิคที่เจอและวิธีแก้ไข (Technical Issues & Fixes)
 
@@ -99,7 +116,7 @@
 
 | หัวข้อ | น้ำหนัก | คะแนนกลุ่ม (0-10) | เหตุผล |
 |---|---|---|---|
-| บรรลุวัตถุประสงค์กลุ่ม | 30% | 9.5 | DoD ครบทุกข้อ (CI เขียวจริง, unit test 98 เคส, AI Advisor + Gemini API จริง, README/Pitch ครบ) |
+| บรรลุวัตถุประสงค์กลุ่ม | 30% | 9.5 | DoD ครบทุกข้อ (CI เขียวจริง, unit test 104 เคส, AI Advisor + Gemini API จริง, README/Pitch ครบ) |
 | ความสอดคล้องของเนื้อหาและมาตรฐานของงาน | 30% | 9.5 | ทำเกินสเปกที่ขอ (DoD ขอ AI/Automation แค่ 1 อย่าง แต่ทำทั้ง Advisor แบบ rule-based และ Gemini จริง) |
 | ปริมาณ คุณภาพ และธรรมาภิบาลของงาน | 30% | 9 | เทสครอบคลุมทุก layer (Business Logic/Data Access/API Integration) มี CI คอยเช็คอัตโนมัติทุกครั้ง |
 | ภาพรวมงานกลุ่มทั้งหมด | 10% | 9 | push + เปิด PR + merge เข้า main สำเร็จ พร้อมส่งงานจริง |

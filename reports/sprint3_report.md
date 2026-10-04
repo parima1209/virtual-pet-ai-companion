@@ -33,9 +33,7 @@
 |---|---|---|
 | `tests/test_pet.py` | 7 | คลาส `Pet` (Sprint 1 เดิม) |
 | `tests/test_history.py` | 13 | `web/history.py` (Sprint 2 เดิม) |
-| `tests/test_web_app.py` | 26 | สไปรต์, `/api/interact` (mock API), `/api/history`, **ใหม่:** neglect decay (4 เคส),
-  `/api/action` ผ่าน HTTP จริง (feed/play/rest/invalid — 4 เคส), `/api/state` (2 เคส), `save_pet`/`load_pet`
-  roundtrip + ไฟล์เสีย/ไม่มี (3 เคส), `state_payload` แจ้งเตือน/ไม่แจ้งเตือน (2 เคส) |
+| `tests/test_web_app.py` | 26 | สไปรต์, `/api/interact` (mock API), `/api/history`, **ใหม่:** neglect decay (4 เคส), `/api/action` ผ่าน HTTP จริง (feed/play/rest/invalid — 4 เคส), `/api/state` (2 เคส), `save_pet`/`load_pet` roundtrip + ไฟล์เสีย/ไม่มี (3 เคส), `state_payload` แจ้งเตือน/ไม่แจ้งเตือน (2 เคส) |
 
 ### 2.2 Manual / Integration Testing แบบครบวงจร (Observation / Expected / Actual)
 รันเซิร์ฟเวอร์จริงด้วย `python web/app.py` แล้วยิง `curl` ตรงไปที่ทุก endpoint (ไม่ใช่แค่ unit test แบบ mock)

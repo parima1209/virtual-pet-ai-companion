@@ -9,7 +9,7 @@
   พร้อม Data Persistence (JSON), Data API Integration (Dog API / Cat Facts API), ระบบ Neglect Decay
   (ปล่อยไว้นานแล้วหิว/หมดแรงเอง), และ AI Advisor แบบ rule-based ที่แนะนำว่าควรทำอะไรต่อ
 
-> **ฟีเจอร์เสริม (extra, นอกเหนือจาก Definition of Done เดิม)** — อยู่ในสาขา `feature/lifelike-pet`:
+> **ฟีเจอร์เสริม (extra, นอกเหนือจาก Definition of Done เดิม)** — merge เข้า `main` แล้ว (Pull Request #1, 29/9/69):
 > ตั้งชื่อสัตว์เลี้ยงใหม่ได้ (✏️), โตขึ้นตามเวลา (ลูกสัตว์ → วัยรุ่น → โตเต็มวัย, ยิ่งดูแลดียิ่งโตไว),
 > ความสะอาด (🧼 ต้องอาบน้ำ ไม่งั้นสกปรกและอารมณ์เสีย), กลางวัน-กลางคืนตามเวลาจริงของเครื่อง,
 > และคุยกับสัตว์เลี้ยงได้ (💬 ผ่าน Gemini API ฟรี ถ้าไม่ตั้งค่าไว้จะตอบด้วยประโยคสำรองแทน) — ดูรายละเอียด
@@ -22,7 +22,7 @@
 - [x] **Sprint 3** — Full-Stack App Dev — ส่งงาน 2/10/69 — โค้ดหลักเสร็จแล้ว (neglect decay, ยืนยันด้วย
   manual test จริง + responsive mode ผ่าน Chrome DevTools แล้ว ปกติดี) push ขึ้น GitHub แล้ว
 - [x] **Final Sprint** — DevOps, CI/CD & AI Integration — ส่งงาน 16/10/69 — GitHub Actions CI (ยืนยันขึ้น
-  เขียวจริงบน GitHub แล้ว), unit test ครบ 98 เคส (รวมฟีเจอร์เสริม lifelike pet), AI Advisor, Gemini API
+  เขียวจริงบน GitHub แล้ว), unit test ครบ 104 เคส (รวมฟีเจอร์เสริม lifelike pet), AI Advisor, Gemini API
   จริง, และ `reports/final_report.md` เสร็จหมดแล้ว push + merge เข้า `main` เรียบร้อย
 
 > ทุกอย่างเสร็จสมบูรณ์แล้ว รวมถึงบทบาททีมและการประเมินตนเองของทุก Sprint (ดูรายละเอียดในไฟล์รายงาน
@@ -54,7 +54,7 @@ python app.py
 python web/app.py
 # แล้วเปิดเบราว์เซอร์ที่ http://127.0.0.1:5000
 
-# 4. รัน unit tests (ครอบคลุมทั้ง CLI และเว็บ) — ควรได้ 98 passed
+# 4. รัน unit tests (ครอบคลุมทั้ง CLI และเว็บ) — ควรได้ 104 passed
 pytest
 
 # 5. (ถ้าอยากเช็คแบบเดียวกับ CI) รัน lint ด้วย
@@ -149,7 +149,7 @@ virtual-pet-ai-companion/
 - Framework Style: Object-Oriented Programming (OOP)
 - Web Framework: Flask (เวอร์ชันเว็บ Pixel Art Game)
 - Pixel Art: Pillow (PIL) สำหรับสร้างสไปรต์
-- Testing: pytest (98 เคส) + flake8 (lint)
+- Testing: pytest (104 เคส) + flake8 (lint)
 - CI/CD: GitHub Actions (`.github/workflows/ci.yml`)
 - API: Dog API (dog.ceo) และ Cat Facts API (catfact.ninja) ผ่าน `requests`
 - Data Persistence: ไฟล์ JSON (`data/pet_state.json`, `data/interaction_history.json`)
